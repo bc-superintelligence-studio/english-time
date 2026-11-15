@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { FIN_PROMOS } from '@/lib/contenido';
 
 /* Toda la vida de la página: entradas al hacer scroll, cuenta regresiva, el día que cambia de color,
-   la barra fija de WhatsApp y el mazo de promociones. Es la misma lógica de la landing original;
+   la barra fija de WhatsApp, el mazo de promociones y la sección de niños. Es la misma lógica de la landing original;
    trabaja sobre el HTML que ya pintó el servidor y no renderiza nada. */
 export default function Interacciones() {
   useEffect(() => {
@@ -174,21 +174,24 @@ export default function Interacciones() {
       num.textContent = (act + 1) + ' / ' + n;
     };
     const sinTransicion = (el: HTMLElement, fn: () => void) => { el.style.transition = 'none'; fn(); void el.offsetWidth; el.style.transition = ''; };
-    const ir = (destino: number, dir: number) => {
-      const nueva = (destino + n) % n;
-      if (nueva === act) return;
-      const vieja = cartas[act], entra = cartas[nueva];
-      if (movimiento && dir > 0) {
-        // La carta de adelante sale volando a la izquierda y vuelve al fondo del mazo.
+    /** Mueve un mazo: hacia adelante, la carta de adelante sale volando a la izquierda y vuelve al fondo;
+        hacia atrás, la carta anterior entra desde la izquierda. La sirven el mazo de adultos y el de Juniors. */
+    const volarCarta = (vieja: Carta, entra: Carta, dir: number) => {
+      if (!movimiento) return;
+      if (dir > 0) {
         window.clearTimeout(vieja._t);
         vieja.classList.add('sale');
         vieja._t = window.setTimeout(() => sinTransicion(vieja, () => vieja.classList.remove('sale')), 460);
-      } else if (movimiento && dir < 0) {
-        // La carta anterior entra desde la izquierda.
+      } else {
         window.clearTimeout(entra._t);
         sinTransicion(entra, () => entra.classList.add('sale'));
         requestAnimationFrame(() => requestAnimationFrame(() => entra.classList.remove('sale')));
       }
+    };
+    const ir = (destino: number, dir: number) => {
+      const nueva = (destino + n) % n;
+      if (nueva === act) return;
+      volarCarta(cartas[act], cartas[nueva], dir);
       act = nueva;
       pintarDeck();
     };
@@ -423,6 +426,88 @@ export default function Interacciones() {
           }
         });
       });
+    }
+
+    /* 9. Ofertas de Juniors en el celular: un mazo como el de las promociones de adultos.
+       Se pasa deslizando, tocando la carta de atrás o con las flechas; en escritorio las tarjetas van lado a lado. */
+    const mazoJ = document.getElementById('mazo-juniors');
+    if (mazoJ) {
+      const listaJ = mazoJ.querySelector('.ofertas-juniors') as HTMLElement;
+      const cartasJ = todos<Carta>('.oferta-junior', mazoJ);
+      const numJ = mazoJ.querySelector('.deck-num') as HTMLElement;
+      const celular = matchMedia('(max-width: 700px)');
+      const nJ = cartasJ.length;
+      let actJ = 0;
+      const pintarJ = () => {
+        cartasJ.forEach((c, i) => { c.dataset.o = String((i - actJ + nJ) % nJ); });
+        numJ.textContent = (actJ + 1) + ' / ' + nJ;
+      };
+      const irJ = (destino: number, dir: number) => {
+        const nueva = (destino + nJ) % nJ;
+        if (nueva === actJ) return;
+        volarCarta(cartasJ[actJ], cartasJ[nueva], dir);
+        actJ = nueva;
+        pintarJ();
+      };
+      limpiar.push(() => cartasJ.forEach((c) => window.clearTimeout(c._t)));
+      todos('.deck-flecha', mazoJ).forEach((b) => {
+        escuchar(b, 'click', () => { const d = Number(b.dataset.dir); irJ(actJ + d, d); });
+      });
+      // Con el teclado: si el foco entra a la carta de atrás, esa carta pasa adelante.
+      escuchar(listaJ, 'focusin', ((e: FocusEvent) => {
+        if (!celular.matches) return;
+        const i = cartasJ.indexOf((e.target as Element).closest('.oferta-junior') as Carta);
+        if (i >= 0 && i !== actJ) irJ(i, 1);
+      }) as EventListener);
+
+      // Arrastrar de lado mueve la carta de adelante; un toque en la de atrás la trae. Los botones de adentro siguen funcionando.
+      let jx0: number | null = null, jy0 = 0, jdx = 0, jArrastra = false, jPuntero: number | null = null, jObjetivo: Carta | null = null, recienArrastro = false;
+      escuchar(listaJ, 'pointerdown', ((e: PointerEvent) => {
+        if (!celular.matches || e.button) return;
+        jx0 = e.clientX; jy0 = e.clientY; jdx = 0; jArrastra = false; jPuntero = e.pointerId;
+        jObjetivo = (e.target as Element).closest('.oferta-junior');
+      }) as EventListener);
+      escuchar(listaJ, 'pointermove', ((e: PointerEvent) => {
+        if (jx0 === null || e.pointerId !== jPuntero) return;
+        jdx = e.clientX - jx0;
+        if (!jArrastra && Math.abs(jdx) > 10 && Math.abs(jdx) > Math.abs(e.clientY - jy0)) {
+          jArrastra = true;
+          try { listaJ.setPointerCapture(jPuntero); } catch { /* el puntero ya se soltó */ }
+          cartasJ[actJ].style.transition = 'none';
+        }
+        if (jArrastra) cartasJ[actJ].style.transform = 'translateX(' + jdx + 'px) rotate(' + (jdx / 18) + 'deg)';
+      }) as EventListener);
+      const soltarJ = ((e: PointerEvent) => {
+        if (jx0 === null) return;
+        jx0 = null;
+        if (!jArrastra) {
+          if (e.type === 'pointerup' && jObjetivo && jObjetivo !== cartasJ[actJ]) irJ(cartasJ.indexOf(jObjetivo), 1);
+          return;
+        }
+        recienArrastro = true;
+        despues(() => { recienArrastro = false; }, 60);
+        const frente = cartasJ[actJ];
+        frente.style.transition = ''; frente.style.transform = '';
+        if (jdx < -60) irJ(actJ + 1, 1);
+        else if (jdx > 60) irJ(actJ - 1, -1);
+      }) as EventListener;
+      escuchar(listaJ, 'pointerup', soltarJ);
+      escuchar(listaJ, 'pointercancel', soltarJ);
+      // Si se arrastró, el clic que llega al soltar no abre WhatsApp.
+      escuchar(listaJ, 'click', ((e: MouseEvent) => { if (recienArrastro) { e.preventDefault(); e.stopPropagation(); } }) as EventListener, { capture: true });
+
+      // La primera vez que el mazo aparece en el celular, la carta de atrás asoma para mostrar que se puede pasar.
+      if (movimiento && 'IntersectionObserver' in window) {
+        const vistaMazo = new IntersectionObserver((es) => {
+          if (!es[0].isIntersecting || !celular.matches) return;
+          vistaMazo.disconnect();
+          despues(() => mazoJ.classList.add('asoma'), 1100);
+          despues(() => mazoJ.classList.remove('asoma'), 2500);
+        }, { threshold: 0.45 });
+        vistaMazo.observe(mazoJ);
+        limpiar.push(() => vistaMazo.disconnect());
+      }
+      pintarJ();
     }
 
     return () => {

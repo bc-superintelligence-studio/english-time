@@ -15,11 +15,11 @@ export default function Inicio() {
         <Dia />
         <Clases />
         <Objetivos />
+        {/* Después de lo que explica las clases para adultos y antes de sus ofertas: la sección de niños, con las suyas. */}
+        <Juniors />
         <Mundo />
         <Promociones />
         <Planes />
-        {/* Después de todo lo de adultos, la sección de niños, con sus propias ofertas. */}
-        <Juniors />
         <Preguntas />
         <Cierre />
       </main>

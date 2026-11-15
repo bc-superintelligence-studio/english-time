@@ -590,36 +590,45 @@ export function Juniors() {
             <p className="carpeta-nota">No pagas horas de clase: te llevas resultados que puedes ver.</p>
           </div>
 
-          <ul className="ofertas-juniors">
-            {OFERTAS_JUNIORS.map((o) => {
-              const [numero, ...resto] = o.sello.split(' ');
-              return (
-                <li className={`oferta-junior oferta-${o.id}`} key={o.id}>
-                  <span className="oferta-sello" aria-hidden="true"><b>{numero}</b>{resto.join(' ')}</span>
-                  <span className="chip-junior">{o.chip}</span>
-                  <h3>{o.titulo}</h3>
-                  <p className="oferta-precio">
-                    <b>{o.precio}<small> COP</small></b>
-                    {o.tachado && <s><span className="oculto">Antes </span>{o.tachado}</s>}
-                  </p>
-                  <p className="oferta-nota">≈ {usd(o.precio)} {o.precioNota}. {o.ahorro}</p>
-                  <ul className="oferta-incluye">{o.incluye.map((t) => <li key={t}>{t}</li>)}</ul>
-                  <p className="oferta-cupos">
-                    <span className="asientos" aria-hidden="true">
-                      {Array.from({ length: o.cupos }, (_, i) => <i style={{ '--i': i } as CSSProperties} key={i} />)}
-                    </span>
-                    {o.cuposTexto}
-                  </p>
-                  {o.id === 'reto' && (
-                    <a className="oferta-hermanos" href={wa(HERMANOS.mensaje)} {...externo}>
-                      <Icono id="wa" /><span><b>¿Son dos?</b> {HERMANOS.texto}</span>
-                    </a>
-                  )}
-                  <a className="btn btn-juniors" href={wa(o.mensaje)} {...externo}><Icono id="wa" />{o.boton}</a>
-                </li>
-              );
-            })}
-          </ul>
+          {/* En el celular las ofertas son un mazo de cartas apiladas (como las promociones de adultos): se deslizan, se tocan o se pasan con las flechas. */}
+          <div className="ofertas-zona" id="mazo-juniors">
+            <ul className="ofertas-juniors">
+              {OFERTAS_JUNIORS.map((o, i) => {
+                const [numero, ...resto] = o.sello.split(' ');
+                return (
+                  <li className={`oferta-junior oferta-${o.id}`} data-o={i} key={o.id}>
+                    <span className="oferta-sello" aria-hidden="true"><b>{numero}</b>{resto.join(' ')}</span>
+                    <span className="chip-junior">{o.chip}</span>
+                    <h3>{o.titulo}</h3>
+                    <p className="oferta-precio">
+                      <b>{o.precio}<small> COP</small></b>
+                      {o.tachado && <s><span className="oculto">Antes </span>{o.tachado}</s>}
+                    </p>
+                    <p className="oferta-nota">≈ {usd(o.precio)} {o.precioNota}. {o.ahorro}</p>
+                    <ul className="oferta-incluye">{o.incluye.map((t) => <li key={t}>{t}</li>)}</ul>
+                    <p className="oferta-cupos">
+                      <span className="asientos" aria-hidden="true">
+                        {Array.from({ length: o.cupos }, (_, i) => <i style={{ '--i': i } as CSSProperties} key={i} />)}
+                      </span>
+                      {o.cuposTexto}
+                    </p>
+                    {o.id === 'reto' && (
+                      <a className="oferta-hermanos" href={wa(HERMANOS.mensaje)} {...externo}>
+                        <Icono id="wa" /><span><b>¿Son dos?</b> {HERMANOS.texto}</span>
+                      </a>
+                    )}
+                    <a className="btn btn-juniors" href={wa(o.mensaje)} {...externo}><Icono id="wa" />{o.boton}</a>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="deck-controles mazo-controles">
+              <button className="deck-flecha" data-dir="-1" aria-label="Oferta anterior"><Icono id="izq" /></button>
+              <span className="deck-num" aria-hidden="true">1 / {OFERTAS_JUNIORS.length}</span>
+              <button className="deck-flecha" data-dir="1" aria-label="Siguiente oferta"><Icono id="der" /></button>
+              <span className="deck-pista">Desliza las tarjetas</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

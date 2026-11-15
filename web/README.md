@@ -22,7 +22,7 @@ npm run piezas   # regenera las 5 publicidades (PNG en ../publicidades y JPG en 
 | Rutas y puntos del mapa | `lib/mapa.ts`, `public/assets/mapa-*.svg` (se regeneran con `scripts/generar-mapa.mjs`) |
 | Diseño de las 5 publicidades (también son las tarjetas del carrusel) | `public/piezas/piezas.html` |
 | Secciones de la página | `components/secciones.tsx` |
-| Animaciones, cuenta regresiva, carrusel, barra fija (con su versión Juniors), sello de Black Friday, puntos del mapa, letras que giran y pregunta de niveles de Juniors | `components/Interacciones.tsx` |
+| Animaciones, cuenta regresiva, carrusel, barra fija (con su versión Juniors), sello de Black Friday, puntos del mapa, letras que giran, pregunta de niveles y mazo de ofertas de Juniors en el celular | `components/Interacciones.tsx` |
 | Estilos | `app/globals.css` |
 | Título, descripción, imagen para compartir y saludo según la hora (script del `<head>`) | `app/layout.tsx` |
 
