@@ -1,5 +1,5 @@
 import { Sprite } from '@/components/base';
-import { BarraFija, Cierre, Clases, Dia, Heroe, Mundo, Objetivos, PiePagina, Planes, Preguntas, Promociones } from '@/components/secciones';
+import { BarraFija, Cierre, Clases, Dia, Heroe, Juniors, Mundo, Objetivos, PiePagina, Planes, Preguntas, Promociones } from '@/components/secciones';
 import Interacciones from '@/components/Interacciones';
 import { datosEstructurados, jsonLd } from '@/lib/seo';
 
@@ -18,6 +18,8 @@ export default function Inicio() {
         <Mundo />
         <Promociones />
         <Planes />
+        {/* Después de todo lo de adultos, la sección de niños, con sus propias ofertas. */}
+        <Juniors />
         <Preguntas />
         <Cierre />
       </main>

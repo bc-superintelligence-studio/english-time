@@ -3,6 +3,8 @@
 @font-face { font-family: 'Bodoni Moda'; src: url(/assets/fonts/bodoni-moda.woff2) format('woff2'); font-weight: 400 900; font-style: normal; font-display: swap; }
 @font-face { font-family: 'Bodoni Moda'; src: url(/assets/fonts/bodoni-moda-italic.woff2) format('woff2'); font-weight: 400 900; font-style: italic; font-display: swap; }
 @font-face { font-family: 'Hanken Grotesk'; src: url(/assets/fonts/hanken-grotesk.woff2) format('woff2'); font-weight: 400 800; font-display: swap; }
+/* Fuente redondeada solo para la sección de niños (English Time Juniors), parecida a la del logo. */
+@font-face { font-family: 'Fredoka'; src: url(/assets/fonts/fredoka.woff2) format('woff2'); font-weight: 300 700; font-display: swap; }
 
 :root {
   --azul: #124296;
@@ -582,8 +584,13 @@ footer img { height: 44px; width: auto; }
 @keyframes pin-onda { from { opacity: .9; transform: scale(1); } to { opacity: 0; transform: scale(5); } }
 .mapa-nombre { fill: #fff; font: 700 15px var(--sans); paint-order: stroke; stroke: var(--noche); stroke-width: 5px; stroke-linejoin: round; transition: opacity .5s ease; }
 .mapa-nombre-origen { fill: #FF8A93; }
-.mapa-avion { fill: #fff; opacity: 0; transition: opacity .3s ease; }
-.mapa-destino.volando .mapa-avion { opacity: 1; }
+/* Punto de luz que recorre la ruta (reemplaza al avión). */
+.mapa-punto { opacity: 0; transition: opacity .3s ease; }
+.mapa-destino.volando .mapa-punto { opacity: 1; }
+.mapa-punto-halo { fill: #FF4D5A; opacity: .4; transform-box: fill-box; transform-origin: center; }
+.mapa-punto-luz { fill: #fff; }
+.anim .mapa-destino.volando .mapa-punto-halo { animation: punto-late .7s ease-in-out infinite alternate; }
+@keyframes punto-late { from { transform: scale(.65); opacity: .55; } to { transform: scale(1.35); opacity: .25; } }
 /* Antes de despegar: rutas ocultas, países apagados. Sin animaciones, el mapa se ve completo. */
 .anim .mapa:not(.armado) .mapa-ruta { visibility: hidden; }
 .anim .mapa-destino:not(.llego) .mapa-pais { stroke: #3A5287; }
@@ -663,4 +670,332 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
 }
 @media (prefers-reduced-motion: reduce) {
   .sello-cuerpo, .mapa-pais, .mapa-ruta, .sello-oferta { transition: none !important; }
+}
+
+/* ---------- English Time Juniors ----------
+   Un mundo aparte dentro de la página: cuaderno cuadriculado, los colores del logo de Juniors,
+   letra redondeada (Fredoka), tarjetas tipo calcomanía con borde y sombra sólida, y letras que giran. */
+.juniors {
+  --j-amarillo: #FFC400; --j-verde: #2DBE4E; --j-rojo: #F0242C; --j-cielo: #19A7E0; --j-azul: #0B4FA6;
+  --redonda: 'Fredoka', 'Hanken Grotesk', system-ui, sans-serif;
+  position: relative; overflow: hidden; overflow: clip; color: var(--tinta);
+  padding-block: clamp(68px, 8vw, 112px);
+  background-color: #EAF5FF;
+  background-image: linear-gradient(#D3E7FA 1.5px, transparent 1.5px), linear-gradient(90deg, #D3E7FA 1.5px, transparent 1.5px);
+  background-size: 30px 30px; background-position: -1px -1px;
+}
+/* Franja de colores arriba, como un borde de crayolas: marca el cambio de mundo. */
+.juniors::before {
+  content: ''; position: absolute; inset: 0 0 auto; height: 12px;
+  background: repeating-linear-gradient(90deg, var(--j-amarillo) 0 64px, var(--j-verde) 64px 128px, var(--j-rojo) 128px 192px, var(--j-cielo) 192px 256px);
+}
+.juniors > .wrap { position: relative; z-index: 1; }
+.juniors h3, .juniors h4 { font-family: var(--redonda); font-variation-settings: normal; letter-spacing: 0; margin: 0; }
+.juniors i[lang="en"] { font-family: var(--redonda); font-style: normal; font-weight: 600; font-size: 1em; }
+.juniors-h3 { font-size: clamp(1.55rem, 1.25rem + 1vw, 2.05rem); font-weight: 600; line-height: 1.1; color: var(--noche); }
+
+/* botón propio de la sección */
+.btn-juniors {
+  font-family: var(--redonda); font-weight: 600; font-size: 1.0625rem; letter-spacing: .01em;
+  background: var(--j-azul); color: #fff; border: 3px solid var(--noche); box-shadow: 4px 4px 0 var(--noche);
+  padding: .9em 1.35em; text-align: left; line-height: 1.15;
+}
+.btn-juniors:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--noche); background: #0A5BC4; }
+.btn-juniors:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--noche); }
+
+/* cabecera: insignia, título que gira y misiones */
+.juniors-cab { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 44px 64px; align-items: center; }
+.juniors-intro { display: grid; gap: 18px; justify-items: start; }
+.juniors-logo {
+  width: 250px; height: auto; padding: 10px 14px; background: #fff; border: 3px solid var(--noche); border-radius: 20px;
+  box-shadow: 6px 6px 0 var(--noche); transform: rotate(-4deg);
+}
+.anim .juniors-logo { transition: transform 1.1s cubic-bezier(.34,1.56,.64,1), opacity .4s ease; }
+.anim .juniors-logo:not(.visto) { opacity: 0; transform: rotate(-200deg) scale(.3); }
+.anim .juniors-logo.visto:hover { animation: menear .6s ease-in-out; }
+@keyframes menear { 0%, 100% { transform: rotate(-4deg); } 25% { transform: rotate(4deg) scale(1.04); } 50% { transform: rotate(-8deg); } 75% { transform: rotate(2deg); } }
+
+.jt {
+  font-family: var(--redonda); font-weight: 700; font-variation-settings: normal; letter-spacing: .01em;
+  font-size: clamp(3rem, 1.6rem + 5vw, 6.3rem); line-height: 1; margin-top: 10px;
+}
+.jt-palabra { display: inline-block; white-space: nowrap; }
+.jt-l { display: inline-block; perspective: 500px; color: var(--c); }
+.jt-v, .jt-g { display: inline-block; }
+.jt-g {
+  -webkit-text-stroke: .06em var(--noche); paint-order: stroke fill;
+  text-shadow: .05em .06em 0 var(--noche);
+}
+/* Entrada: cada letra cae girando y rebota. */
+.anim .jt .jt-l { transition: opacity .35s ease calc(var(--i) * 55ms), transform .9s cubic-bezier(.34,1.56,.64,1) calc(var(--i) * 55ms); }
+.anim .jt:not(.visto) .jt-l { opacity: 0; transform: translateY(-.7em) rotate(-35deg) scale(.4); }
+/* Mientras la sección se ve, las letras dan una vuelta en ola cada pocos segundos. */
+.anim .juniors.en-vista .jt.visto .jt-v { animation: jt-vuelta 6.5s ease-in-out calc(1.8s + var(--i) * 80ms) infinite; }
+@keyframes jt-vuelta { 0% { transform: rotateY(0); } 13%, 100% { transform: rotateY(360deg); } }
+/* Al tocarla o pasar el mouse, la letra salta y gira. */
+.jt-g.gira { animation: jt-gira .85s cubic-bezier(.34,1.56,.64,1); }
+@keyframes jt-gira { 0% { transform: none; } 45% { transform: translateY(-.28em) rotate(200deg) scale(1.18); } 100% { transform: rotate(360deg); } }
+
+.juniors-lema { font: 600 clamp(1.45rem, 1.15rem + 1.1vw, 2.1rem)/1.15 var(--redonda); color: var(--j-azul); }
+.juniors-texto { font-size: 1.1875rem; max-width: 31em; color: #22305A; }
+.juniors-intro .btn-juniors { margin-top: 6px; }
+
+.misiones { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 14px; }
+.mision {
+  display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 14px; align-items: start; padding: 16px 18px 16px 16px;
+  border: 3px solid var(--noche); border-radius: 18px; box-shadow: 5px 5px 0 var(--noche);
+}
+.mision-blindamos { background: #E2F7E7; transform: rotate(-1deg); }
+.mision-adelantamos { background: #DFF2FB; transform: rotate(.8deg); }
+.mision-nivelamos { background: #FFF3C7; transform: rotate(-.6deg); }
+.mision-icono { display: grid; place-items: center; width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid var(--noche); color: var(--noche); }
+.mision-blindamos .mision-icono { background: var(--j-verde); }
+.mision-adelantamos .mision-icono { background: var(--j-cielo); }
+.mision-nivelamos .mision-icono { background: var(--j-amarillo); }
+.mision-icono svg { width: 26px; height: 26px; }
+.mision h4 { font-size: 1.4rem; font-weight: 600; line-height: 1.1; }
+.mision p { font-size: 1rem; line-height: 1.45; margin-top: 4px; color: #22305A; }
+.anim .mision { transition: opacity .6s ease var(--d, 0s), translate .8s cubic-bezier(.34,1.56,.64,1) var(--d, 0s); }
+.anim .mision:not(.visto) { opacity: 0; translate: 40px 0; }
+.juniors-resultado { margin-top: 18px; font: 500 1.2rem/1.35 var(--redonda); color: var(--j-azul); }
+
+/* niveles: la pregunta de los 30 segundos señala el grupo */
+.niveles { margin-top: clamp(60px, 7vw, 92px); display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.65fr); gap: 24px 44px; align-items: start; }
+.niveles-pregunta { display: grid; gap: 12px; grid-row: span 2; }
+.niveles-pregunta p { color: #22305A; font-size: 1.0625rem; }
+.niveles-pregunta .niveles-q { margin-top: 8px; font: 600 1.3rem/1.25 var(--redonda); color: var(--noche); }
+.niveles-opciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px; }
+.nivel-opcion {
+  font: 600 1.0625rem/1 var(--redonda); padding: .75em 1.1em; border-radius: 999px; cursor: pointer;
+  background: #fff; color: var(--noche); border: 3px solid var(--noche); box-shadow: 3px 3px 0 var(--noche);
+  transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease;
+}
+.nivel-opcion:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--noche); }
+.nivel-opcion[aria-pressed="true"] { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--noche); }
+.nivel-opcion.nivel-explorers[aria-pressed="true"] { background: var(--j-amarillo); }
+.nivel-opcion.nivel-champions[aria-pressed="true"] { background: var(--j-verde); }
+.nivel-opcion.nivel-masters[aria-pressed="true"] { background: var(--j-cielo); }
+.niveles-lista { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.nivel {
+  display: flex; flex-direction: column; gap: 8px; padding-bottom: 14px; overflow: hidden;
+  background: #fff; border: 3px solid var(--noche); border-radius: 20px; box-shadow: 5px 5px 0 var(--noche);
+  transition: opacity .35s ease, transform .45s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease;
+}
+.juniors .nivel > * { margin-inline: 18px; }
+.nivel .nivel-numero {
+  margin: 0 0 4px; padding: 10px 18px; display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  font: 600 1rem/1.2 var(--redonda); border-bottom: 3px solid var(--noche);
+}
+.nivel-numero span { font-weight: 500; }
+.nivel-explorers .nivel-numero { background: var(--j-amarillo); }
+.nivel-champions .nivel-numero { background: var(--j-verde); }
+.nivel-masters .nivel-numero { background: var(--j-cielo); }
+.nivel h4 { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+.nivel p { font-size: 1rem; line-height: 1.45; color: #22305A; }
+.nivel .nivel-temas b { color: var(--noche); }
+.nivel .enlace-wa { color: var(--noche); border-color: rgba(11,29,69,.3); padding-block: 8px; font-size: .9375rem; align-self: flex-start; }
+.niveles-lista.con-eleccion .nivel:not(.elegido) { opacity: .5; transform: scale(.97); }
+.nivel.elegido { transform: translateY(-6px) rotate(-1deg); box-shadow: 9px 9px 0 var(--noche); }
+.anim .nivel:not(.visto) { opacity: 0; transform: translateY(26px) rotate(3deg); }
+.niveles-nota { grid-column: 2; font-size: 1rem; color: #33415F; }
+
+/* regla de grados: los niveles se cruzan a propósito y en 6.° caben los tres */
+.regla { margin: 4px 0 6px; display: grid; gap: 10px; }
+.regla-tabla {
+  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); grid-template-rows: auto repeat(3, 30px); gap: 7px 0;
+  padding: 12px 10px 14px; background: #fff; border: 3px solid var(--noche); border-radius: 18px; box-shadow: 5px 5px 0 var(--noche);
+}
+.regla-grado { grid-row: 1; text-align: center; font: 600 .9375rem/1 var(--redonda); color: var(--noche); padding-bottom: 2px; }
+.regla-foco {
+  grid-row: 1 / -1; margin: -6px 2px; border-radius: 10px; border: 2px dashed var(--j-rojo);
+  background: repeating-linear-gradient(-45deg, rgba(240,36,44,.1) 0 6px, transparent 6px 12px);
+}
+.regla-barra {
+  display: flex; align-items: center; margin-inline: 3px; padding-inline: 11px; min-width: 0; overflow: hidden; white-space: nowrap;
+  border: 2.5px solid var(--noche); border-radius: 999px; font: 600 .875rem/1 var(--redonda); color: var(--noche);
+}
+.regla-barra.nivel-explorers { background: var(--j-amarillo); }
+.regla-barra.nivel-champions { background: var(--j-verde); }
+.regla-barra.nivel-masters { background: var(--j-cielo); }
+.anim .regla-barra { transition: clip-path .9s cubic-bezier(.65,0,.35,1) var(--d, 0s); clip-path: inset(0 0 0 0 round 999px); }
+.anim .regla:not(.visto) .regla-barra { clip-path: inset(0 100% 0 0 round 999px); }
+.regla figcaption { font-size: .9375rem; line-height: 1.45; color: #33415F; }
+
+/* carpeta de logros y ofertas para niños */
+.juniors-pie { margin-top: clamp(56px, 7vw, 88px); display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 2fr); gap: 24px; align-items: stretch; }
+.carpeta {
+  padding: 24px 26px 22px; background: #fff; border: 3px solid var(--noche); border-radius: 22px; box-shadow: 6px 6px 0 var(--noche);
+  transform: rotate(-1.2deg); display: grid; gap: 10px; align-content: start;
+}
+.carpeta-icono { width: 64px; color: var(--noche); }
+.carpeta > p { color: #22305A; }
+.carpeta ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.carpeta li { position: relative; padding-left: 30px; font-weight: 600; }
+.carpeta li::before {
+  content: ''; position: absolute; left: 0; top: .2em; width: 20px; height: 20px; background: var(--j-amarillo);
+  clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.carpeta .carpeta-nota { margin-top: 4px; font: 500 1.1rem/1.35 var(--redonda); color: var(--j-azul); }
+.anim .carpeta { transition: opacity .6s ease, transform .9s cubic-bezier(.34,1.56,.64,1); }
+.anim .carpeta:not(.visto) { opacity: 0; transform: rotate(-8deg) scale(.9); }
+.anim .juniors.en-vista .carpeta-estrella { animation: girar 6s linear infinite; transform-box: fill-box; transform-origin: center; }
+
+.ofertas-juniors { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.oferta-junior {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 26px 24px 22px; color: #fff;
+  border: 3px solid var(--noche); border-radius: 22px; box-shadow: 6px 6px 0 var(--noche);
+}
+.oferta-reto { background: var(--j-azul); }
+.oferta-vip { background: var(--rojo); }
+.chip-junior { font: 600 .9375rem/1 var(--redonda); background: #fff; color: var(--noche); border: 2px solid var(--noche); padding: .4em .8em; border-radius: 999px; }
+.oferta-junior h3 { font-size: 1.45rem; font-weight: 600; line-height: 1.15; padding-right: 58px; }
+.oferta-junior p { font-size: 1.0625rem; line-height: 1.45; color: rgba(255,255,255,.94); }
+
+/* sello redondo en la esquina: lo primero que se lee de cada oferta */
+.oferta-sello {
+  position: absolute; top: -22px; right: -14px; width: 94px; height: 94px; border-radius: 50%;
+  display: grid; place-content: center; justify-items: center; text-align: center;
+  background: var(--j-amarillo); color: var(--noche); border: 3px solid var(--noche); box-shadow: 4px 4px 0 var(--noche);
+  font: 600 .9375rem/1.05 var(--redonda); transform: rotate(12deg);
+}
+.oferta-reto .oferta-sello { background: var(--j-verde); }
+.oferta-sello b { font-size: 2.4rem; font-weight: 700; line-height: .9; }
+.anim .oferta-sello { transition: transform .9s cubic-bezier(.34,1.56,.64,1) .35s; }
+.anim .oferta-junior:not(.visto) .oferta-sello { transform: rotate(-160deg) scale(.2); }
+.anim .juniors.en-vista .oferta-junior.visto .oferta-sello { animation: sello-late 4.5s ease-in-out 2s infinite; }
+@keyframes sello-late { 0%, 84%, 100% { transform: rotate(12deg) scale(1); } 90% { transform: rotate(4deg) scale(1.12); } 95% { transform: rotate(16deg) scale(.98); } }
+
+/* precio con letra de calcomanía */
+.oferta-junior .oferta-precio { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; margin-top: 2px; }
+.oferta-precio b {
+  font: 700 clamp(2.7rem, 2.2rem + 1.6vw, 3.4rem)/1 var(--redonda); letter-spacing: .005em; color: var(--j-amarillo);
+  -webkit-text-stroke: .04em var(--noche); paint-order: stroke fill; text-shadow: .045em .055em 0 var(--noche);
+}
+.oferta-vip .oferta-precio b { color: #fff; }
+.oferta-precio small { font: 600 1rem/1 var(--redonda); color: #fff; -webkit-text-stroke: 0; text-shadow: none; margin-left: .3em; }
+.oferta-precio s { font: 600 1.3rem/1 var(--redonda); color: rgba(255,255,255,.9); text-decoration-thickness: 2.5px; text-decoration-color: var(--noche); }
+.oferta-junior .oferta-nota { font-size: 1rem; }
+
+.oferta-incluye { list-style: none; margin: 2px 0 0; padding: 0; display: grid; gap: 9px; }
+.oferta-incluye li { position: relative; padding-left: 31px; font-size: 1rem; line-height: 1.4; font-weight: 500; }
+.oferta-incluye li::before {
+  content: ''; position: absolute; left: 0; top: .1em; width: 21px; height: 21px; box-sizing: border-box;
+  border-radius: 50%; background: var(--j-amarillo); border: 2px solid var(--noche);
+}
+.oferta-incluye li::after {
+  content: ''; position: absolute; left: 7.5px; top: calc(.1em + 4px); width: 5px; height: 9px;
+  border: solid var(--noche); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg);
+}
+
+/* cupos: un pupitre por niño (reto) o una estrella por cupo (VIP) */
+.oferta-junior .oferta-cupos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font: 600 1rem/1.2 var(--redonda); color: #fff; }
+.asientos { display: flex; gap: 5px; }
+.asientos i { width: 17px; height: 17px; border-radius: 5px; background: #fff; border: 2px solid var(--noche); box-sizing: border-box; }
+.oferta-vip .asientos { gap: 3px; }
+.oferta-vip .asientos i {
+  width: 19px; height: 19px; border: 0; border-radius: 0; background: var(--j-amarillo);
+  clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+.anim .asientos i { transition: transform .5s cubic-bezier(.34,1.56,.64,1) calc(.6s + var(--i) * 70ms); }
+.anim .oferta-junior:not(.visto) .asientos i { transform: scale(0); }
+
+/* cupón de hermanos o amigos */
+.oferta-hermanos {
+  display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 14px; border-radius: 14px;
+  border: 2px dashed rgba(255,255,255,.8); background: rgba(255,255,255,.08); color: #fff; text-decoration: none;
+  font: 500 1rem/1.3 var(--redonda); transition: background-color .2s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.oferta-hermanos svg { flex: none; width: 20px; height: 20px; }
+.oferta-hermanos b { font-weight: 600; color: var(--j-amarillo); }
+.oferta-hermanos:hover { background: rgba(255,255,255,.17); transform: rotate(-1deg); }
+
+.oferta-junior .btn-juniors { margin-top: auto; background: #fff; color: var(--noche); }
+.oferta-junior .btn-juniors:hover { background: var(--j-amarillo); }
+.anim .oferta-junior { transition: opacity .6s ease, transform .9s cubic-bezier(.34,1.56,.64,1); }
+.anim .oferta-junior:not(.visto) { opacity: 0; transform: translateY(30px) rotate(2deg); }
+.anim .oferta-vip { transition-delay: .12s; }
+
+/* figuras que flotan alrededor */
+.juniors-deco { position: absolute; inset: 0; pointer-events: none; }
+.jd { position: absolute; width: 50px; height: 50px; overflow: visible; }
+.jd-estrella { top: 6%; right: 5%; width: 60px; height: 60px; fill: var(--j-amarillo); stroke: var(--noche); stroke-width: 2.5; stroke-linejoin: round; }
+.jd-aro { top: 40%; left: 1.5%; fill: none; stroke: var(--j-cielo); stroke-width: 6; }
+.jd-triangulo { bottom: 34%; right: 2.5%; width: 46px; height: 46px; fill: var(--j-verde); stroke: var(--noche); stroke-width: 2.5; stroke-linejoin: round; }
+.jd-mas { top: 4%; left: 44%; width: 38px; height: 38px; fill: none; stroke: var(--j-rojo); stroke-width: 6; stroke-linecap: round; }
+.jd-onda { bottom: 5%; left: 6%; width: 76px; height: 30px; fill: none; stroke: var(--j-azul); stroke-width: 4.5; stroke-linecap: round; }
+.jd-letra { width: auto; height: auto; font: 700 2.7rem/1 var(--redonda); -webkit-text-stroke: 2.5px var(--noche); paint-order: stroke fill; }
+.jd-a { top: 17%; left: 2.5%; color: var(--j-rojo); }
+.jd-b { bottom: 12%; right: 6%; color: var(--j-verde); }
+.jd-c { top: 70%; left: 3%; color: var(--j-amarillo); }
+.anim .juniors .jd { animation: flotar 6s ease-in-out infinite alternate; animation-play-state: paused; }
+.anim .juniors.en-vista .jd { animation-play-state: running; }
+.anim .juniors .jd-estrella, .anim .juniors .jd-aro { animation: girar 16s linear infinite; animation-play-state: paused; }
+.anim .juniors.en-vista .jd-estrella, .anim .juniors.en-vista .jd-aro { animation-play-state: running; }
+.anim .juniors .jd:nth-child(3n) { animation-duration: 7.5s; animation-delay: -2s; }
+.anim .juniors .jd:nth-child(3n+1) { animation-delay: -4s; }
+@keyframes flotar { from { transform: translateY(0) rotate(-8deg); } to { transform: translateY(-16px) rotate(14deg); } }
+
+/* héroe: entrada directa para papás */
+.hero-pie { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-bottom: 28px; }
+.hero-pie .bajar { margin: 0; }
+.ir-juniors {
+  display: inline-flex; align-items: center; gap: 12px; padding: 7px 18px 7px 8px; border-radius: 999px;
+  background: #fff; color: var(--noche); text-decoration: none; font-size: .9375rem; line-height: 1.25;
+  box-shadow: 0 12px 28px -14px rgba(0,0,0,.6); transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+}
+.ir-juniors img { width: 64px; height: auto; }
+.ir-juniors b { display: block; font-weight: 700; font-size: 1rem; }
+.ir-juniors:hover { transform: translateY(-2px) rotate(-1.5deg); }
+
+/* barra fija en modo Juniors */
+.fija-juniors { display: none; }
+.fija.modo-juniors { background: rgba(11,79,166,.96); }
+.fija.modo-juniors .fija-adultos { display: none; }
+.fija.modo-juniors .fija-juniors { display: flex; }
+.fija-juniors img { background: #fff; border-radius: 8px; padding: 3px 6px; }
+.fija-juniors .fija-cuenta { color: #fff; font-family: 'Fredoka', var(--sans); font-weight: 600; font-size: 1.0625rem; }
+.fija-juniors .fija-cuenta b { color: #FFC400; }
+.fija .btn-juniors { background: #FFC400; color: var(--noche); border-width: 2px; box-shadow: 3px 3px 0 var(--noche); }
+
+@media (max-width: 1240px) {
+  .jd-aro, .jd-c, .jd-onda { display: none; }
+  .jd-a { top: 2%; left: auto; right: 20%; }
+}
+@media (max-width: 900px) {
+  .juniors-cab, .niveles, .juniors-pie { grid-template-columns: 1fr; }
+  .niveles-nota { grid-column: auto; }
+  .niveles-pregunta { grid-row: auto; }
+  .jd-mas { left: auto; right: 34%; top: 1.5%; }
+}
+@media (max-width: 700px) {
+  .juniors { background-size: 26px 26px; }
+  .juniors-logo { width: 168px; }
+  .jt { font-size: clamp(2.6rem, 1.4rem + 6vw, 3.4rem); }
+  .juniors-texto { font-size: 1.0625rem; }
+  .juniors-intro .btn-juniors { width: 100%; justify-content: center; text-align: center; }
+  /* Los tres niveles pasan de lado (como los objetivos); la respuesta a la pregunta lleva al que toca. */
+  .niveles-lista {
+    grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 84%; gap: 14px;
+    overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+    margin-inline: -16px; padding: 10px 16px 16px; scroll-padding-inline: 16px;
+  }
+  .niveles-lista::-webkit-scrollbar { display: none; }
+  .nivel { scroll-snap-align: start; }
+  .nivel h4 { font-size: 1.55rem; }
+  .ofertas-juniors { grid-template-columns: 1fr; gap: 34px; }
+  .oferta-junior { padding: 22px 20px 18px; }
+  .oferta-sello { top: -18px; right: -6px; width: 82px; height: 82px; font-size: .875rem; }
+  .oferta-sello b { font-size: 2.1rem; }
+  .regla-barra { padding-inline: 8px; font-size: .8125rem; }
+  .carpeta { padding: 20px 20px 18px; }
+  .mision { grid-template-columns: 44px minmax(0, 1fr); padding: 14px 14px 14px 12px; }
+  .mision-icono { width: 44px; height: 44px; }
+  .jd-estrella { top: 1.2%; right: 4%; width: 44px; height: 44px; }
+  .jd-triangulo, .jd-b, .jd-a { display: none; }
+  .hero-pie { flex-direction: column; align-items: flex-start; }
+  .fija-juniors .fija-cuenta { font-size: .875rem; }
+  .fija-juniors .fija-cuenta b { font-size: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nivel, .nivel-opcion, .ir-juniors, .btn-juniors, .oferta-hermanos { transition: none !important; }
 }

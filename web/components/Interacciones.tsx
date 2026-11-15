@@ -22,7 +22,7 @@ export default function Interacciones() {
 
     /* 1. Entradas al hacer scroll: cada bloque se marca una sola vez cuando aparece. */
     const deck = document.getElementById('deck') as HTMLElement;
-    const revelables = todos('.revelar, .aparece, .escena, .versus-fila, .pasos, .plan, .objetivo, .modalidad, .cierre, .deck');
+    const revelables = todos('.revelar, .aparece, .escena, .versus-fila, .pasos, .plan, .objetivo, .modalidad, .cierre, .deck, .juniors-logo, .jt, .mision, .nivel, .carpeta, .oferta-junior, .regla');
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((es) => {
         es.forEach((e) => {
@@ -122,12 +122,19 @@ export default function Interacciones() {
       miniPasos.forEach((p, i) => p.classList.toggle('on', i <= idx));
     };
 
-    /* 4. Barra fija de WhatsApp: visible entre el botón del héroe y el cierre. */
+    /* 4. Barra fija de WhatsApp: visible entre el botón del héroe y el cierre.
+       Mientras se lee la sección de niños, cambia a la versión de English Time Juniors. */
     const fija = document.getElementById('fija') as HTMLElement;
     const accionesHero = document.querySelector('.hero .acciones') as HTMLElement;
     const cierre = document.getElementById('cierre') as HTMLElement;
-    let fijaVisible = false;
+    const juniors = document.getElementById('juniors');
+    let fijaVisible = false, modoJuniors = false;
     const revisarFija = () => {
+      if (juniors) {
+        const r = juniors.getBoundingClientRect();
+        const enJuniors = r.top < innerHeight * 0.5 && r.bottom > innerHeight * 0.5;
+        if (enJuniors !== modoJuniors) { modoJuniors = enJuniors; fija.classList.toggle('modo-juniors', enJuniors); }
+      }
       const ver = accionesHero.getBoundingClientRect().bottom < 0 && cierre.getBoundingClientRect().top > innerHeight * 0.55;
       if (ver === fijaVisible) return;
       fijaVisible = ver;
@@ -286,12 +293,12 @@ export default function Interacciones() {
       }
     }
 
-    /* 7. Mapa: los aviones salen de Colombia hacia cada país y se quedan volando de vez en cuando. */
+    /* 7. Mapa: un punto de luz sale de Colombia hacia cada país, y después vuelve a salir de vez en cuando. */
     const mapa = document.getElementById('mapa');
     if (mapa) {
       const grupos = todos<SVGGElement>('.mapa-destino', mapa);
       const rutas = grupos.map((g) => g.querySelector('.mapa-ruta') as SVGPathElement);
-      const aviones = grupos.map((g) => g.querySelector('.mapa-avion') as SVGPathElement);
+      const puntos = grupos.map((g) => g.querySelector('.mapa-punto') as SVGGElement);
       const chips = todos<HTMLButtonElement>('.mapa-chip[data-i]');
       const largos = rutas.map((r) => r.getTotalLength());
       const vuelos: number[] = [];
@@ -308,16 +315,14 @@ export default function Interacciones() {
         g.classList.remove('pulso'); void g.getBoundingClientRect(); g.classList.add('pulso');
       };
       const volar = (i: number, ms: number, dibujar: boolean) => {
-        const ruta = rutas[i], avion = aviones[i], largo = largos[i], g = grupos[i];
+        const ruta = rutas[i], punto = puntos[i], largo = largos[i], g = grupos[i];
         cancelAnimationFrame(vuelos[i]);
         g.classList.add('volando');
         const t0 = performance.now();
         const paso = (ahoraMs: number) => {
           const t = Math.min(1, (ahoraMs - t0) / ms), e = suave(t), l = e * largo;
           const p = ruta.getPointAtLength(l);
-          const a = ruta.getPointAtLength(Math.max(0, l - 0.6)), b = ruta.getPointAtLength(Math.min(largo, l + 0.6));
-          const angulo = Math.atan2(b.y - a.y, b.x - a.x) * 180 / Math.PI;
-          avion.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) rotate(${angulo.toFixed(1)}) scale(${escala.toFixed(2)})`);
+          punto.setAttribute('transform', `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)}) scale(${escala.toFixed(2)})`);
           if (dibujar) ruta.style.strokeDashoffset = String(largo * (1 - e));
           if (t < 1) { vuelos[i] = requestAnimationFrame(paso); return; }
           g.classList.remove('volando');
@@ -332,7 +337,7 @@ export default function Interacciones() {
         rutas.forEach((r, i) => { r.style.strokeDasharray = largos[i] + ' ' + largos[i]; r.style.strokeDashoffset = String(largos[i]); });
         mapa.classList.add('armado');
         grupos.forEach((_, i) => despues(() => volar(i, 1400 + largos[i] * 1.1, true), 300 + i * 280));
-        // Después del despegue, cada pocos segundos sale otro avión por una ruta ya trazada.
+        // Después de la primera salida, cada pocos segundos sale otro punto por una ruta ya trazada.
         let siguiente = 0;
         despues(() => {
           const bucle = window.setInterval(() => {
@@ -353,7 +358,7 @@ export default function Interacciones() {
         limpiar.push(() => vistaMapa.disconnect());
       } else if (!armado) { armado = true; despegar(); }
 
-      // Al pasar por (o tocar) un país de la lista, su ruta se destaca y sale un avión hacia allá.
+      // Al pasar por (o tocar) un país de la lista, su ruta se destaca y sale un punto hacia allá.
       const enfocar = (i: number) => {
         foco = i;
         mapa.classList.toggle('con-foco', i >= 0);
@@ -375,6 +380,49 @@ export default function Interacciones() {
         });
       });
       limpiar.push(() => window.clearTimeout(soltarFoco));
+    }
+
+    /* 8. English Time Juniors: las letras del título giran al tocarlas, las figuras flotan solo
+       mientras la sección se ve, y la pregunta de "30 segundos en inglés" señala el grupo del niño. */
+    if (juniors) {
+      if ('IntersectionObserver' in window) {
+        const vistaJuniors = new IntersectionObserver((es) => { juniors.classList.toggle('en-vista', es[0].isIntersecting); }, { threshold: 0.05 });
+        vistaJuniors.observe(juniors);
+        limpiar.push(() => vistaJuniors.disconnect());
+      }
+      if (movimiento) {
+        const girar = (e: Event) => {
+          const g = (e.target as Element).closest('.jt-l')?.querySelector('.jt-g');
+          if (!g || g.classList.contains('gira')) return;
+          g.classList.add('gira');
+          g.addEventListener('animationend', () => g.classList.remove('gira'), { once: true });
+        };
+        const titulo = juniors.querySelector('.jt');
+        if (titulo) { escuchar(titulo, 'pointerover', girar); escuchar(titulo, 'pointerdown', girar); }
+      }
+      const opciones = todos<HTMLButtonElement>('.nivel-opcion', juniors);
+      const niveles = todos('.nivel', juniors);
+      const lista = juniors.querySelector('.niveles-lista') as HTMLElement | null;
+      opciones.forEach((b) => {
+        escuchar(b, 'click', () => {
+          const id = b.dataset.nivel;
+          opciones.forEach((o) => o.setAttribute('aria-pressed', String(o === b)));
+          niveles.forEach((n) => n.classList.toggle('elegido', n.id === 'nivel-' + id));
+          lista?.classList.add('con-eleccion');
+          const elegido = document.getElementById('nivel-' + id);
+          // Si la tarjeta no se ve, se lleva a la vista: de lado dentro de la fila (celular) y, si hace falta, hacia abajo.
+          // (Sin scrollIntoView, que en el celular también corría la página de lado.)
+          if (elegido && lista) {
+            const comportamiento: ScrollBehavior = movimiento ? 'smooth' : 'auto';
+            if (lista.scrollWidth > lista.clientWidth) {
+              const izquierda = lista.scrollLeft + elegido.getBoundingClientRect().left - lista.getBoundingClientRect().left - 16;
+              lista.scrollTo({ left: izquierda, behavior: comportamiento });
+            }
+            const r = elegido.getBoundingClientRect();
+            if (r.top < 0 || r.bottom > innerHeight) window.scrollBy({ top: r.top - Math.max(16, (innerHeight - r.height) / 2), behavior: comportamiento });
+          }
+        });
+      });
     }
 
     return () => {

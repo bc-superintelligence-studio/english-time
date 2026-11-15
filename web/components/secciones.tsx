@@ -1,22 +1,31 @@
 /* eslint-disable @next/next/no-img-element -- los logos y la mascota ya están optimizados; se usan <img> para que el HTML quede igual a la landing original. */
+import { Fragment } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { Cuenta, Icono, Medidor, Revelar, retraso } from './base';
 import {
-  CINTA, ESCENAS, FECHA_TRM, GARANTIA, MENSAJES, MODALIDADES, OBJETIVOS, PAISES, PASOS, PLANES, PREGUNTAS, PROMOS, TELEFONO, TELEFONO_VISIBLE, TRM, VERSUS, usd, wa,
+  CARPETA, CINTA, ESCENAS, FECHA_TRM, GARANTIA, HERMANOS, JUNIORS, MENSAJES, MISIONES, MODALIDADES, NIVELES, OBJETIVOS, OFERTAS_JUNIORS, PAISES, PASOS, PLANES, PREGUNTAS, PROMOS,
+  RETO, TELEFONO, TELEFONO_VISIBLE, TRM, VERSUS, usd, wa,
 } from '@/lib/contenido';
 import type { IconoObjetivo } from '@/lib/contenido';
 import { MAPA } from '@/lib/mapa';
 
 const externo = { target: '_blank', rel: 'noopener' } as const;
 
-/* ---------- barra fija de WhatsApp ---------- */
+/* ---------- barra fija de WhatsApp ----------
+   Tiene dos versiones: la de adultos (Black Friday) y la de English Time Juniors, que aparece
+   mientras se lee la sección de niños para que las dos ofertas no se crucen. */
 export function BarraFija() {
   return (
     <div className="fija" id="fija" aria-hidden="true" inert>
-      <div className="wrap fija-in">
+      <div className="wrap fija-in fija-adultos">
         <img src="/assets/logo-claro.webp" alt="" width={260} height={188} />
         <p className="fija-cuenta"><span className="pill">Black Friday</span><span><span className="solo-escritorio">Las promociones terminan en</span><span className="solo-movil">Promos de Black Friday</span></span><b data-cuenta-corta="">22 días</b></p>
         <a className="btn btn-rojo btn-brillo" href={wa(MENSAJES.barraFija)} {...externo}><Icono id="wa" /><span>Escribirle a Luis<span className="solo-escritorio"> por WhatsApp</span></span></a>
+      </div>
+      <div className="wrap fija-in fija-juniors">
+        <img src="/assets/juniors-logo-280.webp" alt="" width={280} height={192} loading="lazy" />
+        <p className="fija-cuenta"><span>Reto de 4 semanas</span><b>{OFERTAS_JUNIORS[0].precio}</b></p>
+        <a className="btn btn-juniors" href={wa(JUNIORS.barraFija)} {...externo}><Icono id="wa" /><span>Valoración gratis<span className="solo-escritorio"> de 15 minutos</span></span></a>
       </div>
     </div>
   );
@@ -113,10 +122,15 @@ export function Heroe() {
         </div>
       </div>
 
-      <div className="wrap">
+      <div className="wrap hero-pie">
         <a className="bajar aparece" style={retraso('1.2s')} href="#dia">
           <svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".5" /><path d="M11 14.5l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           Tu día empieza a las 7:00 a.m.
+        </a>
+        {/* Entrada directa para papás: salta a la sección de niños. */}
+        <a className="ir-juniors aparece" style={retraso('1.35s')} href="#juniors">
+          <img src="/assets/juniors-logo-280.webp" alt="" width={280} height={192} />
+          <span><b>¿Es para tu hijo?</b> Conoce English Time Juniors</span>
         </a>
       </div>
 
@@ -257,10 +271,8 @@ export function Objetivos() {
   );
 }
 
-/* ---------- mapa: desde Colombia hacia los países donde ya hay estudiantes ---------- */
-/** Avión visto desde arriba, apuntando a la derecha y centrado en 0,0 (el script lo gira según la ruta). */
-const AVION = 'M8 0C8-.8 7.2-1.2 6-1.2H1.6L-2.6-7.6H-4.4L-1.9-1.2H-5.4L-7-3.6H-8.4L-7.4 0-8.4 3.6H-7L-5.4 1.2H-1.9L-4.4 7.6H-2.6L1.6 1.2H6C7.2 1.2 8 .8 8 0Z';
-
+/* ---------- mapa: desde Colombia hacia los países donde ya hay estudiantes ----------
+   Un punto de luz recorre cada ruta (Luis pidió quitar el avión: "no somos una aerolínea"). */
 export function Mundo() {
   const { ancho, alto, origen, destinos } = MAPA;
   return (
@@ -282,7 +294,7 @@ export function Mundo() {
                 <circle className="mapa-onda" cx={d.x} cy={d.y} r="4" />
                 <circle className="mapa-pin" cx={d.x} cy={d.y} r="4" />
                 <text className="mapa-nombre" x={d.x + d.etiqueta.dx} y={d.y + d.etiqueta.dy} textAnchor={d.etiqueta.ancla}>{d.pais}</text>
-                <path className="mapa-avion" d={AVION} />
+                <g className="mapa-punto"><circle className="mapa-punto-halo" r="7" /><circle className="mapa-punto-luz" r="3.4" /></g>
               </g>
             ))}
             <circle className="mapa-origen-onda" cx={origen.x} cy={origen.y} r="6" />
@@ -435,6 +447,180 @@ export function Planes() {
         </div>
         <Garantia />
         <p className="nota">Precios en pesos colombianos (COP). Los valores en dólares son aproximados, con la TRM del {FECHA_TRM} (${Math.round(TRM).toLocaleString('es-CO')} por dólar). Pagas por Nequi, Daviplata, Davivienda o Bold; si estás fuera de Colombia, Luis te indica cómo pagar desde tu país.</p>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- English Time Juniors: la sección de niños ----------
+   Luis pidió que se reconozca sola al bajar: un ambiente propio (cuaderno cuadriculado, colores del logo
+   de Juniors, figuras que flotan) y letras que dan vueltas. */
+const COLORES_LETRAS = ['#FFC400', '#2DBE4E', '#F0242C', '#FFC400', '#19A7E0', '#2DBE4E', '#F0242C'];
+
+/** Título hecho letra por letra: cada letra entra girando, da vueltas de vez en cuando y gira al tocarla. */
+function LetrasQueGiran({ texto }: { texto: string }) {
+  let n = 0;
+  return (
+    <>
+      {texto.split(' ').map((palabra, p) => (
+        <Fragment key={p}>
+          <span className="jt-palabra" aria-hidden="true">
+            {Array.from(palabra).map((letra) => {
+              const i = n++;
+              return (
+                <span className="jt-l" style={{ '--i': i, '--c': COLORES_LETRAS[i % COLORES_LETRAS.length] } as CSSProperties} key={i}>
+                  <span className="jt-v"><span className="jt-g">{letra}</span></span>
+                </span>
+              );
+            })}
+          </span>{' '}
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
+const ICONOS_MISION: Record<(typeof MISIONES)[number]['id'], ReactNode> = {
+  blindamos: <><path d="M12 2.8 4.5 5.6v5.6c0 4.6 3.1 8.6 7.5 10 4.4-1.4 7.5-5.4 7.5-10V5.6z" /><path d="m8.6 12 2.4 2.4 4.6-4.8" /></>,
+  adelantamos: <><path d="M5 17.5c-1.3 1.3-1.6 3.6-1.6 3.6s2.3-.3 3.6-1.6" /><path d="M14.5 4.2c2.6-1.3 5.3-1.1 5.3-1.1s.2 2.7-1.1 5.3c-1.2 2.4-4.4 5.4-7.3 7.2l-2.9-2.9c1.8-2.9 4.8-6.1 7.2-7.3z" /><path d="m8.6 10.5-3.3.3-2.1 2.6 3.7.9M13.5 15.4l-.3 3.3-2.6 2.1-.9-3.7" /><circle cx="15.6" cy="8.4" r="1.4" /></>,
+  nivelamos: <><rect x="3" y="14" width="6" height="6" rx="1" /><rect x="9" y="8" width="6" height="12" rx="1" /><rect x="15" y="3" width="6" height="17" rx="1" /></>,
+};
+
+/** Regla de grados: los tres niveles se cruzan a propósito. En 6.° caben los tres; lo que decide es el inglés que sabe. */
+const GRADOS = [3, 4, 5, 6, 7, 8, 9];
+function ReglaDeGrados() {
+  const primero = GRADOS[0];
+  return (
+    <figure className="regla">
+      <div className="regla-tabla" aria-hidden="true">
+        <span className="regla-foco" style={{ gridColumn: 6 - primero + 1 }} />
+        {GRADOS.map((g) => <span className="regla-grado" style={{ gridColumn: g - primero + 1 }} key={g}>{g}.°</span>)}
+        {NIVELES.map((n, i) => (
+          <span className={`regla-barra nivel-${n.id}`} key={n.id}
+            style={{ gridColumn: `${n.desde - primero + 1} / ${n.hasta - primero + 2}`, gridRow: i + 2, '--d': `${0.25 + i * 0.18}s` } as CSSProperties}>
+            {n.nombre}
+          </span>
+        ))}
+      </div>
+      <figcaption>Un niño de 6.° puede quedar en cualquiera de los tres grupos. Lo que decide es cuánto inglés sabe.</figcaption>
+    </figure>
+  );
+}
+
+export function Juniors() {
+  return (
+    <section className="juniors" id="juniors" aria-labelledby="t-juniors">
+      {/* Figuras que flotan y giran: solo decoran. */}
+      <div className="juniors-deco" aria-hidden="true">
+        <svg className="jd jd-estrella" viewBox="0 0 40 40"><path d="M20 3.5l4.9 10 11 1.6-8 7.8 1.9 11L20 28.7l-9.8 5.2 1.9-11-8-7.8 11-1.6z" /></svg>
+        <svg className="jd jd-aro" viewBox="0 0 40 40"><circle cx="20" cy="20" r="13" /></svg>
+        <svg className="jd jd-triangulo" viewBox="0 0 40 40"><path d="M20 6 35 32H5z" /></svg>
+        <svg className="jd jd-mas" viewBox="0 0 40 40"><path d="M20 7v26M7 20h26" /></svg>
+        <svg className="jd jd-onda" viewBox="0 0 60 24"><path d="M3 12c6-9 12-9 18 0s12 9 18 0 12-9 18 0" /></svg>
+        <span className="jd jd-letra jd-a">A</span>
+        <span className="jd jd-letra jd-b">b</span>
+        <span className="jd jd-letra jd-c">C</span>
+      </div>
+
+      <div className="wrap">
+        <div className="juniors-cab">
+          <div className="juniors-intro">
+            <img className="juniors-logo" src="/assets/juniors-logo.webp" srcSet="/assets/juniors-logo-280.webp 280w, /assets/juniors-logo.webp 520w"
+              sizes="(max-width: 700px) 190px, 250px" width={520} height={357} loading="lazy" alt="English Time Juniors" />
+            <h2 id="t-juniors" className="jt" aria-label={`English Time Juniors: ${JUNIORS.club}. ${JUNIORS.lema}`}>
+              <LetrasQueGiran texto={JUNIORS.club} />
+            </h2>
+            <p className="juniors-lema" aria-hidden="true">{JUNIORS.lema}</p>
+            <p className="juniors-texto aparece">{JUNIORS.texto}</p>
+            <a className="btn btn-juniors aparece" style={retraso('.15s')} href={wa(JUNIORS.valoracion)} {...externo}><Icono id="wa" />Agendar la valoración gratis de 15 minutos</a>
+          </div>
+
+          <div className="misiones-caja">
+            <h3 className="juniors-h3">Un mes, tres misiones</h3>
+            <ul className="misiones">
+              {MISIONES.map((m, i) => (
+                <li className={`mision mision-${m.id}`} style={retraso(`${i * 0.12}s`)} key={m.id}>
+                  <span className="mision-icono" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICONOS_MISION[m.id]}</svg>
+                  </span>
+                  <div><h4>{m.titulo}</h4><p>{m.texto}</p></div>
+                </li>
+              ))}
+            </ul>
+            <p className="juniors-resultado">{JUNIORS.resultado}</p>
+          </div>
+        </div>
+
+        <div className="niveles" id="niveles">
+          <div className="niveles-pregunta">
+            <h3 className="juniors-h3">¿En qué grupo quedaría tu hijo?</h3>
+            <p>No los agrupamos por grado del colegio sino por lo que de verdad saben de inglés.</p>
+            <ReglaDeGrados />
+            <p className="niveles-q" id="niveles-q"><span className="oculto">Responde esta pregunta: </span>¿Tu hijo ya puede presentarse solo en inglés durante 30 segundos?</p>
+            <div className="niveles-opciones" role="group" aria-labelledby="niveles-q">
+              {NIVELES.map((n) => (
+                <button type="button" className={`nivel-opcion nivel-${n.id}`} data-nivel={n.id} aria-pressed="false" aria-controls={`nivel-${n.id}`} key={n.id}>{n.respuesta}</button>
+              ))}
+            </div>
+          </div>
+          <ul className="niveles-lista" aria-live="polite">
+            {NIVELES.map((n) => (
+              <li className={`nivel nivel-${n.id}`} id={`nivel-${n.id}`} key={n.id}>
+                <p className="nivel-numero">{n.numero}<span>{n.grados}</span></p>
+                <h4>{n.nombre}</h4>
+                <p>{n.perfil}</p>
+                <p className="nivel-temas"><b>Ve:</b> {n.temas}</p>
+                <a className="enlace-wa" href={wa(n.mensaje)} {...externo}><Icono id="wa" />Quiero un cupo en {n.nombre}</a>
+              </li>
+            ))}
+          </ul>
+          <p className="niveles-nota">Mismo tema, distinto reto: con <i lang="en">My Daily Routine</i>, el de 4.° escribe tres oraciones y el de 7.°, seis. Por eso hay solo {JUNIORS.cuposPorNivel} cupos por nivel.</p>
+        </div>
+
+        <div className="juniors-pie">
+          <div className="carpeta">
+            <svg className="carpeta-icono" viewBox="0 0 64 52" aria-hidden="true">
+              <path d="M4 10a4 4 0 0 1 4-4h14l6 6h28a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" fill="#FFC400" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
+              <path d="M4 20h56" stroke="currentColor" strokeWidth="2.5" />
+              <path className="carpeta-estrella" d="m32 25 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="#F0242C" />
+            </svg>
+            <h3 className="juniors-h3">La carpeta de logros</h3>
+            <p>{RETO.entregaCarpeta}</p>
+            <ul>{CARPETA.map((c) => <li key={c}>{c}</li>)}</ul>
+            <p className="carpeta-nota">No pagas horas de clase: te llevas resultados que puedes ver.</p>
+          </div>
+
+          <ul className="ofertas-juniors">
+            {OFERTAS_JUNIORS.map((o) => {
+              const [numero, ...resto] = o.sello.split(' ');
+              return (
+                <li className={`oferta-junior oferta-${o.id}`} key={o.id}>
+                  <span className="oferta-sello" aria-hidden="true"><b>{numero}</b>{resto.join(' ')}</span>
+                  <span className="chip-junior">{o.chip}</span>
+                  <h3>{o.titulo}</h3>
+                  <p className="oferta-precio">
+                    <b>{o.precio}<small> COP</small></b>
+                    {o.tachado && <s><span className="oculto">Antes </span>{o.tachado}</s>}
+                  </p>
+                  <p className="oferta-nota">≈ {usd(o.precio)} {o.precioNota}. {o.ahorro}</p>
+                  <ul className="oferta-incluye">{o.incluye.map((t) => <li key={t}>{t}</li>)}</ul>
+                  <p className="oferta-cupos">
+                    <span className="asientos" aria-hidden="true">
+                      {Array.from({ length: o.cupos }, (_, i) => <i style={{ '--i': i } as CSSProperties} key={i} />)}
+                    </span>
+                    {o.cuposTexto}
+                  </p>
+                  {o.id === 'reto' && (
+                    <a className="oferta-hermanos" href={wa(HERMANOS.mensaje)} {...externo}>
+                      <Icono id="wa" /><span><b>¿Son dos?</b> {HERMANOS.texto}</span>
+                    </a>
+                  )}
+                  <a className="btn btn-juniors" href={wa(o.mensaje)} {...externo}><Icono id="wa" />{o.boton}</a>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </section>
   );

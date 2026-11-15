@@ -16,12 +16,13 @@ npm run piezas   # regenera las 5 publicidades (PNG en ../publicidades y JPG en 
 | Qué | Archivo |
 |---|---|
 | Textos, precios, promociones, planes, modalidades (particulares y grupales), preguntas y mensajes de WhatsApp | `lib/contenido.tsx` |
+| English Time Juniors (niños): Club de Adelantados, fechas del reto, misiones, niveles (con sus grados), carpeta de logros, ofertas con precios y tarifa de hermanos | `JUNIORS`, `RETO`, `MISIONES`, `NIVELES`, `CARPETA`, `OFERTAS_JUNIORS` y `HERMANOS` en `lib/contenido.tsx`; logo en `public/assets/juniors-logo*.webp` |
 | Tasa del dólar para los precios en USD (`TRM` y `FECHA_TRM`) | `lib/contenido.tsx` y el script del final de `public/piezas/piezas.html` |
 | Países del mapa (lista de texto) | `PAISES` en `lib/contenido.tsx` |
 | Rutas y puntos del mapa | `lib/mapa.ts`, `public/assets/mapa-*.svg` (se regeneran con `scripts/generar-mapa.mjs`) |
 | Diseño de las 5 publicidades (también son las tarjetas del carrusel) | `public/piezas/piezas.html` |
 | Secciones de la página | `components/secciones.tsx` |
-| Animaciones, cuenta regresiva, carrusel, barra fija, sello de Black Friday y aviones del mapa | `components/Interacciones.tsx` |
+| Animaciones, cuenta regresiva, carrusel, barra fija (con su versión Juniors), sello de Black Friday, puntos del mapa, letras que giran y pregunta de niveles de Juniors | `components/Interacciones.tsx` |
 | Estilos | `app/globals.css` |
 | Título, descripción, imagen para compartir y saludo según la hora (script del `<head>`) | `app/layout.tsx` |
 

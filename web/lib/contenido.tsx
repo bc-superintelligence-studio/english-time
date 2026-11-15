@@ -179,6 +179,7 @@ export const PLANES: { veces: string; clases: string; precio: string; porClase: 
 
 export const PREGUNTAS: { pregunta: string; respuesta: string }[] = [
   { pregunta: '¿Hay clases particulares y clases grupales?', respuesta: 'Sí, las dos, siempre en vivo por Zoom. En las clases particulares 1 a 1 estás solo con tu profe y escoges el horario. En las clases grupales estudias con otros estudiantes, en un horario fijo y a un precio más bajo.' },
+  { pregunta: '¿Tienen clases de inglés para niños?', respuesta: `Sí, en English Time Juniors. El Club de Adelantados es un reto de 4 semanas en vivo por Zoom, del 30 de noviembre al 23 de diciembre: 8 clases grupales de 45 minutos para que tu hijo no olvide lo de este año y vuelva al colegio adelantado. Los grupos se arman por nivel de inglés (Explorers, Champions y Masters), no por grado, con máximo 8 niños. Cuesta $199.000 COP (unos ${usd(199000)}) si te inscribes hasta el 28 de noviembre, y dos hermanos o amigos pagan $299.000 los dos. Se empieza con una valoración gratis de 15 minutos. Para clases particulares está el Black Friday Kids VIP: 4 clases 1 a 1 por $180.000, el precio de 3.` },
   { pregunta: '¿Cómo son las clases de inglés personalizadas?', respuesta: 'Son clases 1 a 1 en vivo por Zoom: solo tú y tu profe. Avanzas a tu ritmo, en tu nivel y con conversación desde el primer día.' },
   { pregunta: '¿Las clases de inglés son online o presenciales?', respuesta: 'Son online, en vivo por Zoom. Puedes tomarlas desde cualquier país del mundo con una conexión a internet, y el horario se acuerda según tu zona horaria.' },
   { pregunta: '¿Qué pasa si no puedo asistir a una clase?', respuesta: 'Tu clase no se pierde: se reprograma para otro día y otra hora. Esto aplica para las clases personalizadas 1 a 1.' },
@@ -227,6 +228,113 @@ export const OBJETIVOS: { icono: IconoObjetivo; titulo: string; texto: string; b
     boton: 'Quiero empezar desde cero', mensaje: 'Hola Luis, quiero empezar a aprender inglés desde cero.',
   },
 ];
+
+/* ---------- English Time Juniors: inglés para niños ----------
+   Lo que se acordó con Luis en la llamada del 12 de noviembre de 2026: no se vende como "refuerzo escolar"
+   sino como ventaja académica (Club de Adelantados), en formato de reto de 4 semanas, con grupos por nivel
+   de inglés y no por grado del colegio. Precios, fechas y cupos: propuesta del 14 de noviembre de 2026
+   (punto de partida, el ejemplo de $200.000 que se dio en la llamada y la clase particular de adultos a $60.000). */
+export const JUNIORS = {
+  club: 'Club de Adelantados',
+  lema: 'Inglés sin miedo al colegio.',
+  texto: 'Un reto de 4 semanas en vacaciones para que tu hijo no olvide lo que aprendió este año y vuelva al colegio adelantado. En vivo por Zoom, para los niños que terminaron calendario A y para los que salen a vacaciones de calendario B.',
+  resultado: 'Deja de sufrir con la tarea y empieza a levantar la mano en clase.',
+  cuposPorNivel: 8,
+  valoracion: 'Hola Luis, quiero agendar la valoración gratis de 15 minutos para el Reto del Club de Adelantados de English Time Juniors ($199.000).',
+  barraFija: 'Hola Luis, vi English Time Juniors y quiero agendar la valoración gratis de 15 minutos para mi hijo.',
+};
+
+/** Fechas del primer reto: 8 clases, lunes y miércoles, sin cruzarse con el festivo del 8 de diciembre y antes de Navidad. */
+export const RETO = {
+  inicio: '2026-11-30', fin: '2026-12-23',
+  fechas: 'Del 30 de noviembre al 23 de diciembre',
+  clases: 8, minutos: 45, dias: 'lunes y miércoles',
+  entregaCarpeta: 'El 23 de diciembre, justo a tiempo para Navidad, te entregamos:',
+};
+
+/** Las tres cosas que se hacen en el mes del reto. */
+export const MISIONES: { id: 'blindamos' | 'adelantamos' | 'nivelamos'; titulo: string; texto: string }[] = [
+  { id: 'blindamos', titulo: 'Blindamos', texto: 'Repasamos lo que vio este año en el colegio, para que las vacaciones no se lo borren.' },
+  { id: 'adelantamos', titulo: 'Adelantamos', texto: 'Le enseñamos antes el vocabulario y la gramática del próximo periodo. Cuando su profe lo explique, ya lo sabrá.' },
+  { id: 'nivelamos', titulo: 'Nivelamos', texto: 'Corregimos las bases flojas que el colegio no alcanza a explicar, como el verbo to be.' },
+];
+
+export type Nivel = { id: string; nombre: string; numero: string; respuesta: string; desde: number; hasta: number; grados: string; perfil: string; temas: string; mensaje: string };
+
+/** Grupos por nivel de inglés, no por grado. La pregunta para ubicar al niño: ¿ya puede presentarse solo en inglés 30 segundos?
+    Los grados se cruzan a propósito: un niño de 6.° puede quedar en cualquiera de los tres grupos. */
+export const NIVELES: Nivel[] = ([
+  {
+    id: 'explorers', nombre: 'Explorers', numero: 'Nivel 1', respuesta: 'Todavía no', desde: 3, hasta: 6,
+    perfil: 'Todavía no lee ni arma oraciones en inglés.', temas: 'Verbo to be, colores, números y presente simple.',
+    mensaje: 'Hola Luis, quiero un cupo para mi hijo en el grupo Explorers del Club de Adelantados.',
+  },
+  {
+    id: 'champions', nombre: 'Champions', numero: 'Nivel 2', respuesta: 'Más o menos', desde: 5, hasta: 8,
+    perfil: 'Sabe lo básico, pero se le complica en el colegio.', temas: 'Auxiliares, pasado y rutinas.',
+    mensaje: 'Hola Luis, quiero un cupo para mi hijo en el grupo Champions del Club de Adelantados.',
+  },
+  {
+    id: 'masters', nombre: 'Masters', numero: 'Nivel 3', respuesta: 'Sí, sin problema', desde: 6, hasta: 9,
+    perfil: 'Va bien y quiere adelantarse a lo que viene.', temas: 'Futuro, comparativos y lectura.',
+    mensaje: 'Hola Luis, quiero un cupo para mi hijo en el grupo Masters del Club de Adelantados.',
+  },
+] as Omit<Nivel, 'grados'>[]).map((n) => ({ ...n, grados: `De ${n.desde}.° a ${n.hasta}.° grado` }));
+
+/** Lo que recibe la familia al final del reto. */
+export const CARPETA = ['Sus notas de antes y después del reto.', 'La lista de 30 palabras nuevas que ya domina.', 'Un video de un minuto presentándose en inglés.'];
+
+export type OfertaJunior = {
+  id: 'reto' | 'vip';
+  chip: string;
+  sello: string;
+  titulo: string;
+  precio: string;
+  /** Precio normal tachado: solo cuando de verdad es lo que cuesta sin la promo. */
+  tachado?: string;
+  precioNota: string;
+  ahorro: string;
+  incluye: string[];
+  cupos: number;
+  cuposTexto: string;
+  boton: string;
+  mensaje: string;
+};
+
+/** Ofertas para niños, aparte de las promociones de adultos. */
+export const OFERTAS_JUNIORS: OfertaJunior[] = [
+  {
+    id: 'reto', chip: 'Precio de lanzamiento', sello: '4 semanas', titulo: 'Reto del Club de Adelantados',
+    precio: '$199.000', precioNota: 'el reto completo', ahorro: 'Menos de $25.000 por clase. Inscríbete hasta el 28 de noviembre; desde el 29 cuesta $240.000.',
+    incluye: [
+      `${RETO.clases} clases en vivo de ${RETO.minutos} minutos, ${RETO.dias}.`,
+      `${RETO.fechas}.`,
+      `Grupo de máximo ${JUNIORS.cuposPorNivel} niños de su mismo nivel.`,
+      'Valoración gratis y carpeta de logros.',
+    ],
+    cupos: JUNIORS.cuposPorNivel, cuposTexto: `${JUNIORS.cuposPorNivel} cupos por nivel`,
+    boton: 'Agendar la valoración gratis', mensaje: 'Hola Luis, quiero agendar la valoración gratis de 15 minutos para el Reto del Club de Adelantados de English Time Juniors ($199.000).',
+  },
+  {
+    id: 'vip', chip: 'Black Friday', sello: '4 por 3', titulo: 'Black Friday Kids VIP',
+    precio: '$180.000', tachado: '$240.000', precioNota: 'las 4 clases', ahorro: 'Pagas 3 clases y te llevas 4: ahorras $60.000. Hasta el 28 de noviembre.',
+    incluye: [
+      '4 clases particulares 1 a 1: solo tu hijo y su profe.',
+      'En el horario que escojan, en diciembre o enero.',
+      'Si no puede asistir, la clase se reprograma.',
+      'Valoración gratis de 15 minutos.',
+    ],
+    cupos: 10, cuposTexto: 'Solo 10 cupos',
+    boton: 'Pedir un cupo VIP', mensaje: 'Hola Luis, quiero la promo Black Friday Kids VIP de English Time Juniors: 4 clases particulares por $180.000 para mi hijo.',
+  },
+];
+
+/** Si inscriben a dos niños (hermanos, primos o amigos) en el reto, el segundo paga la mitad. */
+export const HERMANOS = {
+  precio: '$299.000',
+  texto: 'Hermanos o amigos: 2 niños por $299.000',
+  mensaje: 'Hola Luis, quiero inscribir a 2 niños en el Reto del Club de Adelantados con la tarifa de hermanos o amigos ($299.000 los dos).',
+};
 
 /** Países donde English Time ya tiene estudiantes, además de Colombia (el mapa y sus rutas están en lib/mapa.ts). */
 export const PAISES = ['Estados Unidos', 'Canadá', 'Panamá', 'Chile', 'España', 'Países Bajos', 'Polonia', 'Japón', 'Australia'];

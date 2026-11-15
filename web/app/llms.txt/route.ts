@@ -1,4 +1,7 @@
-import { FECHA_TRM, FIN_PROMOS, GARANTIA, MODALIDADES, NEGOCIO, OBJETIVOS, PAISES, PLANES, PREGUNTAS, PROMOS, SITIO, TELEFONO_VISIBLE, WHATSAPP, usd } from '@/lib/contenido';
+import {
+  CARPETA, FECHA_TRM, FIN_PROMOS, GARANTIA, HERMANOS, JUNIORS, MISIONES, MODALIDADES, NEGOCIO, NIVELES, OBJETIVOS, OFERTAS_JUNIORS, PAISES, PLANES, PREGUNTAS, PROMOS, SITIO,
+  TELEFONO_VISIBLE, WHATSAPP, usd,
+} from '@/lib/contenido';
 
 export const dynamic = 'force-static';
 
@@ -27,6 +30,15 @@ export function GET() {
     '',
     `## Promociones de Black Friday (hasta el ${fin})`,
     ...PROMOS.map((p) => `- ${p.titulo}: ${p.texto} ${p.precio} COP ${p.precioNota} (unos ${usd(p.precio)}).`),
+    '',
+    `## English Time Juniors: ${JUNIORS.club} (inglés para niños)`,
+    `${JUNIORS.lema} ${JUNIORS.texto}`,
+    ...MISIONES.map((m) => `- ${m.titulo}: ${m.texto}`),
+    `- Grupos por nivel de inglés, no por grado del colegio; ${JUNIORS.cuposPorNivel} cupos por nivel. Para ubicar al niño: ¿ya puede presentarse solo en inglés durante 30 segundos?`,
+    ...NIVELES.map((n) => `- ${n.nombre} (${n.numero.toLowerCase()}, ${n.grados.toLowerCase()}): ${n.perfil} Temas: ${n.temas}`),
+    `- Carpeta de logros al final del reto: ${CARPETA.map((c) => c.replace(/\.$/, '').toLowerCase()).join('; ')}.`,
+    ...OFERTAS_JUNIORS.map((o) => `- ${o.titulo} (${o.chip}, ${o.cuposTexto.toLowerCase()}): ${o.precio} COP ${o.precioNota} (unos ${usd(o.precio)}). ${o.ahorro} ${o.incluye.join(' ')}`),
+    `- ${HERMANOS.texto} (unos ${usd(HERMANOS.precio)}) en el ${OFERTAS_JUNIORS[0].titulo}.`,
     '',
     '## Preguntas frecuentes',
     ...PREGUNTAS.flatMap((q) => [`### ${q.pregunta}`, q.respuesta, '']),
