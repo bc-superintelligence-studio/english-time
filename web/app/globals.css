@@ -964,7 +964,6 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
   background-size: 100% 100%, 200% 100%;
   box-shadow: 0 14px 30px -14px rgba(0,0,0,.7);
 }
-.barra .ir-juniors { margin-left: auto; margin-right: 20px; }
 .ir-juniors-sello { position: relative; flex: none; display: grid; place-items: center; width: 100px; aspect-ratio: 1; border-radius: 50%; background: #FFF6D6; }
 .ir-juniors-sello img { width: 60px; height: auto; position: relative; }
 .aviso-anillo { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
@@ -1086,8 +1085,7 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
   .jd-estrella { top: 1.2%; right: 4%; width: 44px; height: 44px; }
   .jd-triangulo, .jd-b, .jd-a { display: none; }
   .hero-pie { flex-direction: column; align-items: flex-start; }
-  .barra { flex-wrap: wrap; }
-  .barra .ir-juniors { order: 5; flex-basis: 100%; margin: 14px 0 0; gap: 10px; padding-right: 16px; }
+  .hero-pie .ir-juniors { gap: 10px; padding-right: 16px; }
   .ir-juniors-sello { width: 84px; }
   .ir-juniors-sello img { width: 50px; }
   .aviso-msj b { font-size: 1.15rem; }

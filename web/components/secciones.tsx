@@ -121,7 +121,7 @@ const MENSAJES_AVISO: { grande: string; chica: ReactNode }[] = [
 
 function AvisoJuniors() {
   return (
-    <Link className="ir-juniors aparece" style={retraso('.5s')} href={JUNIORS.ruta} data-rota="">
+    <Link className="ir-juniors aparece" style={retraso('1.35s')} href={JUNIORS.ruta} data-rota="">
       <span className="ir-juniors-sello" aria-hidden="true">
         <svg className="aviso-anillo" viewBox="0 0 100 100">
           <defs><path id="aviso-anillo" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" /></defs>
@@ -145,8 +145,6 @@ export function Heroe() {
         <img className="logo-hero" src="/assets/logo-claro-hd.webp" srcSet="/assets/logo-claro.webp 260w, /assets/logo-claro-hd.webp 480w" sizes="(max-width: 700px) 106px, 160px"
           alt="English Time: easy, fast, fun!" width={480} height={346} fetchPriority="high" />
         <Sello lugar="barra" />
-        {/* El aviso de Juniors va arriba, en la primera pantalla: en escritorio junto al botón y en el celular debajo del logo. */}
-        <AvisoJuniors />
         <a className="btn btn-borde" href={wa(MENSAJES.general)} {...externo}>Escribir por WhatsApp</a>
       </div>
 
@@ -171,6 +169,9 @@ export function Heroe() {
           <svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".5" /><path d="M11 14.5l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           Tu día empieza a las 7:00 a.m.
         </a>
+        {/* Luis (19 nov): primero se ve que es una página de inglés para adultos y, al bajar un poquito,
+            aparece "también hay English Time Juniors". Por eso va al pie de la entrada y no junto al logo. */}
+        <AvisoJuniors />
       </div>
 
       <Cinta />
