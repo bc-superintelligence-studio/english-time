@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>English Time Juniors · Piezas</title>
+<!-- Publicidades de English Time Juniors para WhatsApp e Instagram (1080x1350) y la imagen al compartir /juniors (1200x630).
+     Se exportan con npm run piezas. Si cambia un precio, se cambia aquí y en lib/contenido.tsx. -->
+<style>
+@font-face { font-family: 'Fredoka'; src: url(../assets/fonts/fredoka.woff2) format('woff2'); font-weight: 300 700; }
+@font-face { font-family: 'Hanken Grotesk'; src: url(../assets/fonts/hanken-grotesk.woff2) format('woff2'); font-weight: 400 800; }
+:root {
+  --noche: #0B1D45; --rojo: #D4111F; --amarillo: #FFC400; --verde: #2DBE4E; --rojo-j: #F0242C; --cielo: #19A7E0; --azul: #0B4FA6;
+  --papel: #EAF5FF; --cuadro: #D3E7FA;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #6b6f78; font-family: 'Hanken Grotesk', sans-serif; }
+body.solo { background: transparent; overflow: hidden; }
+body:not(.solo) .ad { margin: 48px auto; box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+body.solo .ad:not(.on) { display: none; }
+
+.ad {
+  width: 1080px; height: 1350px; position: relative; overflow: hidden; padding: 66px 76px 54px;
+  display: flex; flex-direction: column; color: var(--noche);
+  background-color: var(--papel);
+  background-image: linear-gradient(var(--cuadro) 2px, transparent 2px), linear-gradient(90deg, var(--cuadro) 2px, transparent 2px);
+  background-size: 44px 44px; background-position: -1px -1px;
+}
+/* franja de crayolas arriba: la marca de Juniors */
+.ad::before {
+  content: ''; position: absolute; inset: 0 0 auto; height: 22px;
+  background: repeating-linear-gradient(90deg, var(--amarillo) 0 110px, var(--verde) 110px 220px, var(--rojo-j) 220px 330px, var(--cielo) 330px 440px);
+}
+.redonda { font-family: 'Fredoka', sans-serif; }
+
+.top { display: flex; justify-content: space-between; align-items: flex-start; position: relative; z-index: 2; }
+.logo-j { width: 230px; background: #fff; border: 6px solid var(--noche); border-radius: 34px; padding: 14px 22px; box-shadow: 12px 12px 0 var(--noche); transform: rotate(-4deg); }
+.badge { text-align: right; }
+.pill { display: inline-block; font: 600 32px/1 'Fredoka', sans-serif; padding: 14px 28px 15px; border-radius: 999px; border: 5px solid var(--noche); box-shadow: 6px 6px 0 var(--noche); background: var(--rojo); color: #fff; }
+.badge small { display: block; margin-top: 14px; font-size: 30px; font-weight: 700; }
+
+/* letras de calcomanía con los colores del logo */
+.letras { font: 700 128px/.98 'Fredoka', sans-serif; letter-spacing: .01em; }
+.letras span { display: inline-block; -webkit-text-stroke: .06em var(--noche); paint-order: stroke fill; text-shadow: .05em .06em 0 var(--noche); }
+.sticker { -webkit-text-stroke: .045em var(--noche); paint-order: stroke fill; text-shadow: .045em .055em 0 var(--noche); }
+
+.foot {
+  margin-top: auto; position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center;
+  padding-top: 26px; border-top: 4px dashed rgba(11,29,69,.35);
+}
+.wa { display: flex; align-items: center; gap: 16px; font-size: 42px; font-weight: 800; }
+.wa svg { width: 54px; height: 54px; }
+.foot .note { font-size: 29px; font-weight: 700; text-align: right; line-height: 1.25; }
+.moneda { display: block; font: 700 30px/1.2 'Hanken Grotesk', sans-serif; }
+
+/* ---------- 1. Portada ---------- */
+.portada h1 { margin-top: 46px; }
+.portada .lema { font: 600 56px/1.1 'Fredoka', sans-serif; color: var(--azul); margin-top: 22px; }
+.portada .texto { font-size: 34px; line-height: 1.3; font-weight: 600; margin-top: 16px; max-width: 900px; }
+.portada .ofertas { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 34px; }
+.portada .oferta { border: 6px solid var(--noche); border-radius: 34px; box-shadow: 12px 12px 0 var(--noche); padding: 24px 28px 26px; color: #fff; }
+.portada .oferta:first-child { background: var(--azul); transform: rotate(-1.2deg); }
+.portada .oferta:last-child { background: var(--rojo); transform: rotate(1.2deg); }
+.portada .oferta > span { font: 600 34px/1.1 'Fredoka', sans-serif; display: block; }
+.portada .oferta b { display: block; font: 700 92px/1 'Fredoka', sans-serif; margin-top: 12px; color: var(--amarillo); }
+.portada .oferta:last-child b { color: #fff; }
+.portada .oferta .moneda { margin-top: 8px; opacity: .95; }
+.portada .valoracion { margin-top: 34px; font: 600 38px/1.2 'Fredoka', sans-serif; display: flex; align-items: center; gap: 18px; }
+.portada .valoracion i { width: 52px; height: 52px; border-radius: 50%; background: var(--verde); border: 5px solid var(--noche); flex: none; position: relative; }
+.portada .valoracion i::after { content: ''; position: absolute; left: 13px; top: 6px; width: 12px; height: 22px; border: solid var(--noche); border-width: 0 6px 6px 0; transform: rotate(45deg); }
+
+/* ---------- 2. Reto ---------- */
+.reto { background-color: var(--azul); color: #fff; background-image: linear-gradient(rgba(255,255,255,.07) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.07) 2px, transparent 2px); }
+.reto .pill { background: var(--amarillo); color: var(--noche); }
+.sello { position: absolute; right: 70px; top: 262px; width: 210px; height: 210px; border-radius: 50%; background: var(--verde); border: 6px solid var(--noche); box-shadow: 10px 10px 0 var(--noche);
+  display: grid; place-content: center; text-align: center; transform: rotate(12deg); color: var(--noche); z-index: 3; }
+.sello b { display: block; font: 700 108px/.85 'Fredoka', sans-serif; }
+.sello span { font: 600 34px/1 'Fredoka', sans-serif; }
+.reto h2 { font: 700 84px/1.02 'Fredoka', sans-serif; margin-top: 52px; max-width: 690px; }
+.reto .precio { display: flex; align-items: flex-end; gap: 22px; margin-top: 20px; }
+.reto .precio b { font: 700 150px/.9 'Fredoka', sans-serif; color: var(--amarillo); }
+.reto .precio .moneda { padding-bottom: 16px; }
+.reto .misiones { list-style: none; margin-top: 32px; display: grid; gap: 12px; }
+.reto .misiones li { display: flex; align-items: center; gap: 18px; font-size: 34px; font-weight: 600; }
+.reto .misiones li b { font: 700 34px/1 'Fredoka', sans-serif; padding: 9px 18px 11px; border-radius: 999px; border: 4px solid var(--noche); color: var(--noche); flex: none; }
+.reto .misiones li:nth-child(1) b { background: var(--verde); }
+.reto .misiones li:nth-child(2) b { background: var(--cielo); }
+.reto .misiones li:nth-child(3) b { background: var(--amarillo); }
+.chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.chips span { font: 600 29px/1 'Fredoka', sans-serif; padding: 13px 20px; border-radius: 999px; background: #fff; color: var(--noche); border: 4px solid var(--noche); }
+.cupon { margin-top: 28px; padding: 18px 26px; border: 5px dashed rgba(255,255,255,.85); border-radius: 26px; font: 500 33px/1.25 'Fredoka', sans-serif; }
+.cupon b { color: var(--amarillo); font-weight: 700; }
+.reto .foot { border-top-color: rgba(255,255,255,.35); }
+
+/* ---------- 3. Kids VIP ---------- */
+.vip { background-color: var(--rojo); color: #fff; background-image: linear-gradient(rgba(255,255,255,.07) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.07) 2px, transparent 2px); }
+.vip .pill { background: var(--noche); border-color: #fff; box-shadow: 6px 6px 0 rgba(0,0,0,.35); }
+.vip .num { font: 700 320px/.82 'Fredoka', sans-serif; margin-top: 44px; letter-spacing: -.01em; }
+.vip .num em { font-style: normal; font-size: .5em; color: var(--amarillo); vertical-align: .32em; margin: 0 .04em; }
+.vip h2 { font: 700 80px/1 'Fredoka', sans-serif; margin-top: 24px; }
+.vip p { font-size: 35px; line-height: 1.3; font-weight: 600; margin-top: 18px; max-width: 900px; }
+.vip .precio { display: flex; align-items: flex-end; gap: 6px 24px; margin-top: 24px; flex-wrap: wrap; }
+.vip .precio b { font: 700 130px/.9 'Fredoka', sans-serif; }
+.vip .precio s { flex-basis: 100%; font: 600 44px/1 'Fredoka', sans-serif; text-decoration-thickness: 5px; text-decoration-color: var(--noche); opacity: .92; }
+.vip .precio .moneda { padding-bottom: 16px; }
+.estrellas { display: flex; align-items: center; gap: 8px; margin-top: 28px; font: 700 38px/1 'Fredoka', sans-serif; }
+.estrellas i { width: 46px; height: 46px; background: var(--amarillo); clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); }
+.estrellas span { margin-left: 16px; }
+.vip .foot { border-top-color: rgba(255,255,255,.4); }
+
+/* ---------- 4. Niveles ---------- */
+.niveles { background-color: #FFF6D6; background-image: linear-gradient(#F4E3A6 2px, transparent 2px), linear-gradient(90deg, #F4E3A6 2px, transparent 2px); }
+.niveles .pill { background: var(--azul); }
+.niveles h2 { font: 700 80px/1.02 'Fredoka', sans-serif; margin-top: 46px; }
+.niveles .pregunta { font: 600 38px/1.2 'Fredoka', sans-serif; color: var(--azul); margin-top: 16px; }
+.niveles ul { list-style: none; display: grid; gap: 18px; margin-top: 28px; }
+.niveles li { display: grid; grid-template-columns: 230px 1fr; background: #fff; border: 6px solid var(--noche); border-radius: 30px; box-shadow: 10px 10px 0 var(--noche); overflow: hidden; }
+.niveles li .resp { display: grid; place-content: center; text-align: center; font: 600 32px/1.1 'Fredoka', sans-serif; border-right: 6px solid var(--noche); padding: 16px; }
+.niveles li:nth-child(1) .resp { background: var(--amarillo); }
+.niveles li:nth-child(2) .resp { background: var(--verde); }
+.niveles li:nth-child(3) .resp { background: var(--cielo); }
+.niveles li .info { padding: 16px 26px 18px; }
+.niveles li h3 { font: 700 50px/1 'Fredoka', sans-serif; display: flex; align-items: baseline; gap: 18px; }
+.niveles li h3 small { font: 700 28px/1 'Hanken Grotesk', sans-serif; color: #33415F; }
+.niveles li p { font-size: 28px; line-height: 1.3; font-weight: 600; margin-top: 8px; color: #22305A; }
+.niveles .nota { margin-top: 24px; font: 600 32px/1.25 'Fredoka', sans-serif; }
+
+/* ---------- 5. Imagen al compartir /juniors (1200x630) ---------- */
+.og { width: 1200px; height: 630px; padding: 64px 70px 52px; flex-direction: row; align-items: center; gap: 56px; }
+.og .logo-j { width: 330px; flex: none; }
+.og .letras { font-size: 104px; }
+.og .lema { font: 600 46px/1.1 'Fredoka', sans-serif; color: var(--azul); margin-top: 18px; }
+.og .chips { margin-top: 28px; }
+.og .chips span { font-size: 30px; box-shadow: 5px 5px 0 var(--noche); }
+.og .chips span b { color: var(--azul); }
+.og .chips span:last-child b { color: var(--rojo); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="wa" viewBox="0 0 24 24">
+      <path d="M12 2.2a9.8 9.8 0 0 0-8.5 14.7L2.2 21.8l5-1.3A9.8 9.8 0 1 0 12 2.2z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M8.7 7.2c.25-.55.5-.56.74-.57h.63c.21 0 .5.05.73.55l.95 2.2c.08.2.1.43-.05.63l-.7.86c-.16.19-.2.4-.07.62.5.86 1.18 1.66 1.98 2.3.64.5 1.33.86 2.03 1.15.24.1.47.03.62-.14l.86-1.04c.18-.22.42-.27.68-.17l2.05 1c.25.12.4.27.4.52 0 .55-.24 1.45-.96 1.95-.7.5-1.85.75-3.56.04-2.03-.84-3.66-2.43-4.66-4.07-.7-1.15-1.17-2.42-1.1-3.43.05-.9.4-1.6.83-2.2z" fill="currentColor"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- 1 · Portada -->
+<section class="ad portada" id="juniors-portada">
+  <div class="top">
+    <img class="logo-j" src="../assets/juniors-logo.webp" alt="English Time Juniors">
+    <div class="badge"><span class="pill">Black Friday Kids</span><small>Hasta el 28 de noviembre</small></div>
+  </div>
+  <h1 class="letras" data-letras="Club de Adelantados">Club de Adelantados</h1>
+  <p class="lema">Inglés sin miedo al colegio.</p>
+  <p class="texto">Un reto de 4 semanas en vacaciones para que tu hijo vuelva al colegio adelantado. En vivo por Zoom.</p>
+  <div class="ofertas">
+    <div class="oferta"><span>Reto de 4 semanas</span><b>$199.000</b><small class="moneda">COP ≈ <span data-cop="199000">US$61</span></small></div>
+    <div class="oferta"><span>Kids VIP, 4 por 3</span><b>$180.000</b><small class="moneda">COP ≈ <span data-cop="180000">US$56</span></small></div>
+  </div>
+  <p class="valoracion"><i></i>Valoración gratis de 15 minutos</p>
+  <div class="foot">
+    <div class="wa"><svg><use href="#wa"/></svg>+57 301 650 7626</div>
+    <div class="note">englishtime.com.co/juniors</div>
+  </div>
+</section>
+
+<!-- 2 · Reto del Club de Adelantados -->
+<section class="ad reto" id="juniors-reto">
+  <div class="top">
+    <img class="logo-j" src="../assets/juniors-logo.webp" alt="English Time Juniors">
+    <div class="badge"><span class="pill">Precio de lanzamiento</span><small>Hasta el 28 de noviembre</small></div>
+  </div>
+  <div class="sello"><b>4</b><span>semanas</span></div>
+  <h2 class="sticker">Reto del Club de Adelantados</h2>
+  <div class="precio"><b class="sticker">$199.000</b><small class="moneda">COP ≈ <span data-cop="199000">US$61</span><br>el reto completo</small></div>
+  <ul class="misiones">
+    <li><b>Blindamos</b>lo que vio este año en el colegio</li>
+    <li><b>Adelantamos</b>lo del próximo periodo</li>
+    <li><b>Nivelamos</b>las bases débiles</li>
+  </ul>
+  <div class="chips"><span>8 clases de 45 min</span><span>Lunes y miércoles</span><span>30 nov. al 23 dic.</span></div>
+  <p class="cupon"><b>¿Son dos?</b> Hermanos o amigos: 2 niños por $299.000</p>
+  <div class="foot">
+    <div class="wa"><svg><use href="#wa"/></svg>+57 301 650 7626</div>
+    <div class="note">8 cupos por nivel<br>Grupos de su mismo nivel</div>
+  </div>
+</section>
+
+<!-- 3 · Black Friday Kids VIP -->
+<section class="ad vip" id="juniors-vip">
+  <div class="top">
+    <img class="logo-j" src="../assets/juniors-logo.webp" alt="English Time Juniors">
+    <div class="badge"><span class="pill">Black Friday</span><small>Hasta el 28 de noviembre</small></div>
+  </div>
+  <div class="num sticker">4<em>×</em>3</div>
+  <h2 class="sticker">Black Friday Kids VIP</h2>
+  <p>4 clases particulares 1 a 1: solo tu hijo y su profe, en el horario que escojan, en diciembre o enero.</p>
+  <div class="precio"><s>Antes $240.000</s><b class="sticker">$180.000</b><small class="moneda">COP ≈ <span data-cop="180000">US$56</span><br>las 4 clases</small></div>
+  <div class="estrellas"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><span>Solo 10 cupos</span></div>
+  <div class="foot">
+    <div class="wa"><svg><use href="#wa"/></svg>+57 301 650 7626</div>
+    <div class="note">Si no puede asistir,<br>la clase se reprograma</div>
+  </div>
+</section>
+
+<!-- 4 · ¿En qué grupo quedaría tu hijo? -->
+<section class="ad niveles" id="juniors-niveles">
+  <div class="top">
+    <img class="logo-j" src="../assets/juniors-logo.webp" alt="English Time Juniors">
+    <div class="badge"><span class="pill">Valoración gratis</span><small>15 minutos por Zoom</small></div>
+  </div>
+  <h2>¿En qué grupo quedaría tu hijo?</h2>
+  <p class="pregunta">¿Ya puede presentarse solo en inglés durante 30 segundos?</p>
+  <ul>
+    <li><div class="resp">Todavía no</div><div class="info"><h3>Explorers <small>3.° a 6.°</small></h3><p>Verbo to be, colores, números y presente simple.</p></div></li>
+    <li><div class="resp">Más o menos</div><div class="info"><h3>Champions <small>5.° a 8.°</small></h3><p>Auxiliares, pasado y rutinas.</p></div></li>
+    <li><div class="resp">Sí, sin problema</div><div class="info"><h3>Masters <small>6.° a 9.°</small></h3><p>Futuro, comparativos y lectura.</p></div></li>
+  </ul>
+  <p class="nota">No los agrupamos por grado sino por lo que saben. Máximo 8 niños por grupo.</p>
+  <div class="foot">
+    <div class="wa"><svg><use href="#wa"/></svg>+57 301 650 7626</div>
+    <div class="note">englishtime.com.co/juniors</div>
+  </div>
+</section>
+
+<!-- 5 · Imagen al compartir englishtime.com.co/juniors -->
+<section class="ad og" id="juniors-og">
+  <img class="logo-j" src="../assets/juniors-logo.webp" alt="English Time Juniors">
+  <div>
+    <h1 class="letras" data-letras="Club de Adelantados">Club de Adelantados</h1>
+    <p class="lema">Inglés sin miedo al colegio.</p>
+    <div class="chips"><span>Reto de 4 semanas: <b>$199.000</b></span><span>Kids VIP, 4 por 3: <b>$180.000</b></span></div>
+  </div>
+</section>
+
+<script>
+  // Letras de colores, como el título de la página.
+  const COLORES = ['#FFC400', '#2DBE4E', '#F0242C', '#FFC400', '#19A7E0', '#2DBE4E', '#F0242C'];
+  document.querySelectorAll('[data-letras]').forEach((el) => {
+    let n = 0;
+    el.textContent = '';
+    el.dataset.letras.split(' ').forEach((palabra, p) => {
+      if (p) el.append(' ');
+      const w = document.createElement('span');
+      w.style.whiteSpace = 'nowrap'; w.style.textShadow = 'none'; w.style.webkitTextStroke = '0';
+      for (const l of palabra) { const s = document.createElement('span'); s.textContent = l; s.style.color = COLORES[n++ % COLORES.length]; w.append(s); }
+      el.append(w);
+    });
+  });
+  // Dólares aproximados con la misma TRM y el mismo redondeo de usd() en lib/contenido.tsx.
+  const TRM = 3237.83;
+  document.querySelectorAll('[data-cop]').forEach((el) => {
+    const v = Number(el.dataset.cop) / TRM, r = v >= 100 ? Math.round(v / 5) * 5 : Math.round(v);
+    el.textContent = 'US$' + r.toLocaleString('en-US');
+  });
+  const p = new URLSearchParams(location.search).get('p');
+  if (p) { document.body.classList.add('solo'); document.getElementById(p)?.classList.add('on'); }
+</script>
+</body>
+</html>

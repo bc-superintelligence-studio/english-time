@@ -179,7 +179,7 @@ export const PLANES: { veces: string; clases: string; precio: string; porClase: 
 
 export const PREGUNTAS: { pregunta: string; respuesta: string }[] = [
   { pregunta: '¿Hay clases particulares y clases grupales?', respuesta: 'Sí, las dos, siempre en vivo por Zoom. En las clases particulares 1 a 1 estás solo con tu profe y escoges el horario. En las clases grupales estudias con otros estudiantes, en un horario fijo y a un precio más bajo.' },
-  { pregunta: '¿Tienen clases de inglés para niños?', respuesta: `Sí, en English Time Juniors. El Club de Adelantados es un reto de 4 semanas en vivo por Zoom, del 30 de noviembre al 23 de diciembre: 8 clases grupales de 45 minutos para que tu hijo no olvide lo de este año y vuelva al colegio adelantado. Los grupos se arman por nivel de inglés (Explorers, Champions y Masters), no por grado, con máximo 8 niños. Cuesta $199.000 COP (unos ${usd(199000)}) si te inscribes hasta el 28 de noviembre, y dos hermanos o amigos pagan $299.000 los dos. Se empieza con una valoración gratis de 15 minutos. Para clases particulares está el Black Friday Kids VIP: 4 clases 1 a 1 por $180.000, el precio de 3.` },
+  { pregunta: '¿Tienen clases de inglés para niños?', respuesta: 'Sí, en English Time Juniors (englishtime.com.co/juniors). Está el Club de Adelantados, un reto de 4 semanas por Zoom en grupos por nivel de inglés, y el Black Friday Kids VIP de clases particulares 1 a 1. En esa página están los niveles, las fechas y los precios.' },
   { pregunta: '¿Cómo son las clases de inglés personalizadas?', respuesta: 'Son clases 1 a 1 en vivo por Zoom: solo tú y tu profe. Avanzas a tu ritmo, en tu nivel y con conversación desde el primer día.' },
   { pregunta: '¿Las clases de inglés son online o presenciales?', respuesta: 'Son online, en vivo por Zoom. Puedes tomarlas desde cualquier país del mundo con una conexión a internet, y el horario se acuerda según tu zona horaria.' },
   { pregunta: '¿Qué pasa si no puedo asistir a una clase?', respuesta: 'Tu clase no se pierde: se reprograma para otro día y otra hora. Esto aplica para las clases personalizadas 1 a 1.' },
@@ -235,9 +235,13 @@ export const OBJETIVOS: { icono: IconoObjetivo; titulo: string; texto: string; b
    de inglés y no por grado del colegio. Precios, fechas y cupos: propuesta del 14 de noviembre de 2026
    (punto de partida, el ejemplo de $200.000 que se dio en la llamada y la clase particular de adultos a $60.000). */
 export const JUNIORS = {
+  /** Página propia de Juniors: los papás llegan desde el aviso del inicio y solo ven lo de niños. */
+  ruta: '/juniors',
+  tituloPagina: 'English Time Juniors: clases de inglés para niños por Zoom',
+  descripcionPagina: 'Club de Adelantados: un reto de 4 semanas en vacaciones, en vivo por Zoom, en grupos por nivel de inglés (Explorers, Champions y Masters). Valoración gratis de 15 minutos. Desde $180.000 COP.',
   club: 'Club de Adelantados',
   lema: 'Inglés sin miedo al colegio.',
-  texto: 'Un reto de 4 semanas en vacaciones para que tu hijo no olvide lo que aprendió este año y vuelva al colegio adelantado. En vivo por Zoom, para los niños que terminaron calendario A y para los que salen a vacaciones de calendario B.',
+  texto: 'Un reto de 4 semanas en vacaciones para que tu hijo no olvide lo que aprendió este año y vuelva al colegio adelantado. En vivo por Zoom, para calendario A y B.',
   resultado: 'Deja de sufrir con la tarea y empieza a levantar la mano en clase.',
   cuposPorNivel: 8,
   valoracion: 'Hola Luis, quiero agendar la valoración gratis de 15 minutos para el Reto del Club de Adelantados de English Time Juniors ($199.000).',
@@ -256,7 +260,7 @@ export const RETO = {
 export const MISIONES: { id: 'blindamos' | 'adelantamos' | 'nivelamos'; titulo: string; texto: string }[] = [
   { id: 'blindamos', titulo: 'Blindamos', texto: 'Repasamos lo que vio este año en el colegio, para que las vacaciones no se lo borren.' },
   { id: 'adelantamos', titulo: 'Adelantamos', texto: 'Le enseñamos antes el vocabulario y la gramática del próximo periodo. Cuando su profe lo explique, ya lo sabrá.' },
-  { id: 'nivelamos', titulo: 'Nivelamos', texto: 'Corregimos las bases flojas que el colegio no alcanza a explicar, como el verbo to be.' },
+  { id: 'nivelamos', titulo: 'Nivelamos', texto: 'Corregimos las bases débiles que el colegio no alcanza a explicar, como el verbo to be.' },
 ];
 
 export type Nivel = { id: string; nombre: string; numero: string; respuesta: string; desde: number; hasta: number; grados: string; perfil: string; temas: string; mensaje: string };
@@ -335,6 +339,17 @@ export const HERMANOS = {
   texto: 'Hermanos o amigos: 2 niños por $299.000',
   mensaje: 'Hola Luis, quiero inscribir a 2 niños en el Reto del Club de Adelantados con la tarifa de hermanos o amigos ($299.000 los dos).',
 };
+
+/** Preguntas frecuentes de la página de Juniors (también van a los datos estructurados de esa página). */
+export const PREGUNTAS_JUNIORS: { pregunta: string; respuesta: string }[] = [
+  { pregunta: '¿Para qué edades es el Club de Adelantados?', respuesta: 'Para niños y jóvenes de 3.° a 9.° grado, más o menos de 8 a 15 años. Pero el grupo no lo define la edad ni el grado, sino cuánto inglés sabe tu hijo.' },
+  { pregunta: '¿Cómo sé en qué nivel queda mi hijo?', respuesta: 'Pregúntale si puede presentarse solo en inglés durante 30 segundos: si dice que todavía no, va para Explorers; si más o menos, para Champions; si sí, para Masters. Después, en la valoración gratis de 15 minutos por Zoom, lo escuchamos y confirmamos su grupo.' },
+  { pregunta: '¿Cómo son las clases del reto?', respuesta: `Son ${RETO.clases} clases en vivo por Zoom de ${RETO.minutos} minutos, los ${RETO.dias}, del 30 de noviembre al 23 de diciembre. Cada grupo tiene máximo ${JUNIORS.cuposPorNivel} niños del mismo nivel y todos ven el mismo tema con un reto a la medida de cada uno.` },
+  { pregunta: '¿Cuánto cuesta?', respuesta: `El reto de 4 semanas cuesta $199.000 COP (unos ${usd(199000)}) si te inscribes hasta el 28 de noviembre; desde el 29 cuesta $240.000. Dos hermanos o amigos pagan $299.000 los dos. El Black Friday Kids VIP son 4 clases particulares 1 a 1 por $180.000 (unos ${usd(180000)}), el precio de 3.` },
+  { pregunta: '¿Qué recibo al final del reto?', respuesta: 'La carpeta de logros: sus notas de antes y después del reto, la lista de 30 palabras nuevas que ya domina y un video de un minuto de tu hijo presentándose en inglés. Te la entregamos el 23 de diciembre, justo para Navidad.' },
+  { pregunta: '¿Y si mi hijo necesita clases solo para él?', respuesta: 'Para eso está el Black Friday Kids VIP: clases particulares 1 a 1 en el horario que ustedes escojan, en diciembre o enero. Si no puede asistir, la clase se reprograma.' },
+  { pregunta: '¿Cómo pago?', respuesta: 'Por Nequi, Daviplata, Davivienda o Bold. Si están fuera de Colombia, Luis te indica cómo pagar desde tu país. Escríbele por WhatsApp y te envía los datos.' },
+];
 
 /** Países donde English Time ya tiene estudiantes, además de Colombia (el mapa y sus rutas están en lib/mapa.ts). */
 export const PAISES = ['Estados Unidos', 'Canadá', 'Panamá', 'Chile', 'España', 'Países Bajos', 'Polonia', 'Japón', 'Australia'];

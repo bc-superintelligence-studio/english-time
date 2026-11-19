@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "postbuild": "cp out/juniors.html out/juniors/index.html",
     "start": "next start",
     "lint": "eslint",
     "piezas": "zsh scripts/exportar-piezas.sh"

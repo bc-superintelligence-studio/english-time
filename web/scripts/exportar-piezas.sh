@@ -13,3 +13,17 @@ for p in portada bootcamp dosporuno plan90 congela; do
   sips -s format jpeg -s formatOptions 90 -Z 1080 "$OUT/english-time-$p.png" --out "$WEB/$p.jpg" >/dev/null
   echo "$p listo"
 done
+
+# English Time Juniors: 4 publicidades 1080x1350 y la imagen que muestra WhatsApp al compartir /juniors (1200x630).
+for p in juniors-portada juniors-reto juniors-vip juniors-niveles; do
+  "$CHROME" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 \
+    --window-size=1080,1350 --virtual-time-budget=4000 --allow-file-access-from-files \
+    --screenshot="$OUT/english-time-$p.png" "file://$DIR/public/piezas/juniors.html?p=$p" >/dev/null 2>&1
+  echo "$p listo"
+done
+"$CHROME" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1 \
+  --window-size=1200,630 --virtual-time-budget=4000 --allow-file-access-from-files \
+  --screenshot="$DIR/app/juniors/opengraph-image.png" "file://$DIR/public/piezas/juniors.html?p=juniors-og" >/dev/null 2>&1
+echo "imagen para compartir /juniors lista"
+
+cp "$DIR/app/juniors/opengraph-image.png" "$DIR/app/juniors/twitter-image.png"

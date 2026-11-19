@@ -20,6 +20,9 @@
   --serif: 'Bodoni Moda', 'Didot', 'Bodoni 72', Georgia, serif;
   --sans: 'Hanken Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --suave: cubic-bezier(.2,.8,.2,1);
+  /* English Time Juniors: colores del logo de niños y su letra redondeada */
+  --j-amarillo: #FFC400; --j-verde: #2DBE4E; --j-rojo: #F0242C; --j-cielo: #19A7E0; --j-azul: #0B4FA6;
+  --redonda: 'Fredoka', 'Hanken Grotesk', system-ui, sans-serif;
 }
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -231,15 +234,16 @@ html[data-saludo="tarde"] .saludo [data-s="tarde"], html[data-saludo="noche"] .s
 .versus-cab span:last-child { color: var(--rojo); }
 .versus .antes, .versus .despues { display: flex; gap: 14px; align-items: flex-start; }
 .versus .antes { color: var(--gris); }
-.versus .antes span {
+/* El tachón va en un elemento en línea (no en el hijo del flex, que se vuelve bloque): así cruza cada renglón en el celular. */
+.versus .tachon {
   background: linear-gradient(var(--rojo), var(--rojo)) no-repeat 0 62% / 100% 2px;
   -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 .versus .despues { font-weight: 700; color: var(--tinta); }
 .versus svg { width: 24px; height: 24px; flex: none; margin-top: 2px; }
 /* El método viejo se tacha y aparece el de English Time. */
-.anim .versus-fila .antes span { background-size: 0% 2px; transition: background-size .7s ease .25s; }
-.anim .versus-fila.visto .antes span { background-size: 100% 2px; }
+.anim .versus-fila .tachon { background-size: 0% 2px; transition: background-size .7s ease .25s; }
+.anim .versus-fila.visto .tachon { background-size: 100% 2px; }
 .anim .versus-fila .despues { opacity: 0; transform: translateX(-14px); transition: opacity .6s ease .75s, transform .7s var(--suave) .75s; }
 .anim .versus-fila.visto .despues { opacity: 1; transform: none; }
 .anim .versus-fila .despues svg { transform: scale(0); transition: transform .5s cubic-bezier(.3,1.7,.5,1) .85s; }
@@ -676,8 +680,6 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
    Un mundo aparte dentro de la página: cuaderno cuadriculado, los colores del logo de Juniors,
    letra redondeada (Fredoka), tarjetas tipo calcomanía con borde y sombra sólida, y letras que giran. */
 .juniors {
-  --j-amarillo: #FFC400; --j-verde: #2DBE4E; --j-rojo: #F0242C; --j-cielo: #19A7E0; --j-azul: #0B4FA6;
-  --redonda: 'Fredoka', 'Hanken Grotesk', system-ui, sans-serif;
   position: relative; overflow: hidden; overflow: clip; color: var(--tinta);
   padding-block: clamp(68px, 8vw, 112px);
   background-color: #EAF5FF;
@@ -690,7 +692,7 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
   background: repeating-linear-gradient(90deg, var(--j-amarillo) 0 64px, var(--j-verde) 64px 128px, var(--j-rojo) 128px 192px, var(--j-cielo) 192px 256px);
 }
 .juniors > .wrap { position: relative; z-index: 1; }
-.juniors h3, .juniors h4 { font-family: var(--redonda); font-variation-settings: normal; letter-spacing: 0; margin: 0; }
+.juniors h2, .juniors h3 { font-family: var(--redonda); font-variation-settings: normal; letter-spacing: 0; margin: 0; }
 .juniors i[lang="en"] { font-family: var(--redonda); font-style: normal; font-weight: 600; font-size: 1em; }
 .juniors-h3 { font-size: clamp(1.55rem, 1.25rem + 1vw, 2.05rem); font-weight: 600; line-height: 1.1; color: var(--noche); }
 
@@ -739,6 +741,15 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
 .juniors-lema { font: 600 clamp(1.45rem, 1.15rem + 1.1vw, 2.1rem)/1.15 var(--redonda); color: var(--j-azul); }
 .juniors-texto { font-size: 1.1875rem; max-width: 31em; color: #22305A; }
 .juniors-intro .btn-juniors { margin-top: 6px; }
+/* Atajos con los precios: llevan a las ofertas sin tener que leer todo. */
+.juniors-atajos { display: flex; flex-wrap: wrap; gap: 10px; }
+.juniors-atajos a {
+  font: 600 1rem/1.2 var(--redonda); color: var(--noche); text-decoration: none; padding: .55em .95em; border-radius: 999px;
+  background: #fff; border: 2.5px solid var(--noche); box-shadow: 3px 3px 0 var(--noche); transition: transform .15s ease, box-shadow .15s ease;
+}
+.juniors-atajos a:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--noche); }
+.juniors-atajos b { font-weight: 700; color: var(--j-azul); }
+.juniors-atajos .atajo-vip b { color: var(--rojo); }
 
 .misiones { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 14px; }
 .mision {
@@ -753,7 +764,7 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
 .mision-adelantamos .mision-icono { background: var(--j-cielo); }
 .mision-nivelamos .mision-icono { background: var(--j-amarillo); }
 .mision-icono svg { width: 26px; height: 26px; }
-.mision h4 { font-size: 1.4rem; font-weight: 600; line-height: 1.1; }
+.mision h3 { font-size: 1.4rem; font-weight: 600; line-height: 1.1; }
 .mision p { font-size: 1rem; line-height: 1.45; margin-top: 4px; color: #22305A; }
 .anim .mision { transition: opacity .6s ease var(--d, 0s), translate .8s cubic-bezier(.34,1.56,.64,1) var(--d, 0s); }
 .anim .mision:not(.visto) { opacity: 0; translate: 40px 0; }
@@ -790,7 +801,7 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
 .nivel-explorers .nivel-numero { background: var(--j-amarillo); }
 .nivel-champions .nivel-numero { background: var(--j-verde); }
 .nivel-masters .nivel-numero { background: var(--j-cielo); }
-.nivel h4 { font-size: 1.75rem; font-weight: 700; line-height: 1; }
+.nivel h3 { font-size: 1.75rem; font-weight: 700; line-height: 1; }
 .nivel p { font-size: 1rem; line-height: 1.45; color: #22305A; }
 .nivel .nivel-temas b { color: var(--noche); }
 .nivel .enlace-wa { color: var(--noche); border-color: rgba(11,29,69,.3); padding-block: 8px; font-size: .9375rem; align-self: flex-start; }
@@ -941,14 +952,80 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
 /* héroe: entrada directa para papás */
 .hero-pie { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; margin-bottom: 28px; }
 .hero-pie .bajar { margin: 0; }
+/* Aviso para papás que lleva a /juniors. Luis: "que se mueva, gire, salte" y que diga English Time Juniors,
+   Black Friday o ¿es para tu hijo?: borde de crayolas que corre, anillo de texto que gira alrededor del logo,
+   mensajes que cambian (los mueve el código del sello de Black Friday) y un salto de vez en cuando. */
 .ir-juniors {
-  display: inline-flex; align-items: center; gap: 12px; padding: 7px 18px 7px 8px; border-radius: 999px;
-  background: #fff; color: var(--noche); text-decoration: none; font-size: .9375rem; line-height: 1.25;
-  box-shadow: 0 12px 28px -14px rgba(0,0,0,.6); transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  display: inline-flex; align-items: center; gap: 14px; padding: 6px 24px 6px 6px; border-radius: 999px;
+  color: var(--noche); text-decoration: none; line-height: 1.2;
+  border: 3px solid transparent;
+  background: linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(90deg, var(--j-amarillo), var(--j-verde), var(--j-rojo), var(--j-cielo), var(--j-amarillo), var(--j-verde)) border-box;
+  background-size: 100% 100%, 200% 100%;
+  box-shadow: 0 14px 30px -14px rgba(0,0,0,.7);
 }
-.ir-juniors img { width: 64px; height: auto; }
-.ir-juniors b { display: block; font-weight: 700; font-size: 1rem; }
-.ir-juniors:hover { transform: translateY(-2px) rotate(-1.5deg); }
+.barra .ir-juniors { margin-left: auto; margin-right: 20px; }
+.ir-juniors-sello { position: relative; flex: none; display: grid; place-items: center; width: 100px; aspect-ratio: 1; border-radius: 50%; background: #FFF6D6; }
+.ir-juniors-sello img { width: 60px; height: auto; position: relative; }
+.aviso-anillo { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.aviso-anillo text { fill: var(--j-azul); font: 700 9.6px var(--redonda); letter-spacing: .3px; }
+.ir-juniors-mensajes { display: grid; text-align: left; }
+.aviso-msj { grid-area: 1 / 1; display: grid; gap: 3px; align-content: center; opacity: 0; transform: translateY(40%); transition: opacity .4s ease, transform .5s var(--suave); }
+.aviso-msj.on { opacity: 1; transform: none; }
+.aviso-msj.sale { opacity: 0; transform: translateY(-40%); }
+.aviso-msj b { font: 700 1.3rem/1.05 var(--redonda); color: var(--j-azul); }
+.aviso-msj:nth-child(2) b { color: var(--rojo); }
+.aviso-msj > span { font-size: .9375rem; font-weight: 600; color: var(--noche); }
+.ir-juniors-nombre { display: inline-flex; margin-left: .15em; font: 700 1.15rem/1 var(--redonda); vertical-align: -.06em; }
+.ir-juniors-nombre span { display: inline-block; color: var(--c); -webkit-text-stroke: .055em var(--noche); paint-order: stroke fill; }
+.anim .ir-juniors { animation: aviso-borde 3s linear infinite; }
+.anim .ir-juniors.visto { animation: aviso-borde 3s linear infinite, aviso-salto 4s ease-in-out 1.6s infinite; }
+.anim .aviso-anillo { animation: girar 9s linear infinite; }
+.anim .ir-juniors.visto .ir-juniors-sello img { animation: aviso-giro 4s cubic-bezier(.34,1.56,.64,1) 1.6s infinite; }
+.anim .ir-juniors.visto .ir-juniors-nombre span { animation: aviso-ola 2s ease-in-out calc(.3s + var(--i) * 70ms) infinite; }
+.anim .ir-juniors:hover .ir-juniors-sello img, .anim .ir-juniors:focus-visible .ir-juniors-sello img { animation: aviso-giro-ya .8s cubic-bezier(.34,1.56,.64,1); }
+.ir-juniors:hover { box-shadow: 0 18px 36px -12px rgba(0,0,0,.8); }
+@keyframes aviso-borde { to { background-position: 0 0, -200% 0; } }
+@keyframes aviso-salto {
+  0%, 62%, 100% { translate: 0 0; rotate: 0deg; }
+  68% { translate: 0 -14px; rotate: -3deg; }
+  74% { translate: 0 0; rotate: 2deg; }
+  80% { translate: 0 -6px; rotate: -1deg; }
+  86% { translate: 0 0; rotate: 0deg; }
+}
+@keyframes aviso-giro { 0%, 60% { rotate: 0deg; scale: 1; } 72% { scale: 1.18; } 84%, 100% { rotate: 360deg; scale: 1; } }
+@keyframes aviso-giro-ya { from { rotate: 0deg; } 50% { scale: 1.2; } to { rotate: 360deg; scale: 1; } }
+@keyframes aviso-ola { 0%, 50%, 100% { translate: 0 0; } 25% { translate: 0 -.3em; } }
+
+/* ---------- página de English Time Juniors (/juniors) ---------- */
+.cabecera-juniors { background: var(--noche); color: #fff; }
+.cabecera-juniors .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+.cabecera-logo img { height: 66px; width: auto; }
+.cabecera-enlaces { display: flex; align-items: center; gap: 22px; }
+.cabecera-enlaces > a:not(.btn) { color: #fff; font-weight: 600; text-decoration: none; padding-block: 10px; border-bottom: 2px solid rgba(255,255,255,.35); }
+.cabecera-enlaces > a:not(.btn):hover { border-bottom-color: #fff; }
+.cabecera-juniors + main > .juniors { padding-top: clamp(40px, 4.5vw, 64px); }
+.cabecera-juniors + main .juniors-logo { width: 200px; }
+.juniors-intro { gap: 16px; }
+.juniors-preguntas { background: #fff; }
+.juniors-preguntas h2 { font-family: var(--redonda); font-variation-settings: normal; letter-spacing: 0; }
+.juniors-preguntas summary { font-family: var(--redonda); font-weight: 600; font-size: 1.1875rem; }
+.juniors-preguntas summary::after { color: var(--j-azul); }
+.cierre-juniors { position: relative; overflow: hidden; overflow: clip; background: var(--j-azul); color: #fff; }
+.cierre-juniors::before {
+  content: ''; position: absolute; inset: 0 0 auto; height: 12px;
+  background: repeating-linear-gradient(90deg, var(--j-amarillo) 0 64px, var(--j-verde) 64px 128px, var(--j-rojo) 128px 192px, var(--j-cielo) 192px 256px);
+}
+.cierre-juniors .wrap { display: grid; gap: 22px; justify-items: start; }
+.cierre-juniors .juniors-logo { width: 150px; padding: 8px 12px; }
+.cierre-juniors h2 { font: 700 clamp(2.4rem, 1.5rem + 3.4vw, 4.2rem)/1.02 var(--redonda); letter-spacing: 0; max-width: 12em; }
+.cierre-juniors p { color: #DCE9FF; font-size: 1.1875rem; }
+.cierre-juniors .btn-juniors { background: var(--j-amarillo); color: var(--noche); }
+.cierre-juniors .btn-juniors:hover { background: #FFD54A; }
+.cierre-juniors .numero { font-size: 1rem; color: #C9DAF5; }
+.cierre-juniors .numero a { display: inline-block; padding-block: 12px; color: #fff; font-weight: 700; text-decoration: none; }
+.pie-enlace { color: #fff; font-weight: 600; text-decoration: none; padding-block: 8px; border-bottom: 1px solid rgba(255,255,255,.4); }
+.pie-enlace:hover { border-bottom-color: #fff; }
 
 /* barra fija en modo Juniors */
 .fija-juniors { display: none; }
@@ -984,7 +1061,7 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
   }
   .niveles-lista::-webkit-scrollbar { display: none; }
   .nivel { scroll-snap-align: start; }
-  .nivel h4 { font-size: 1.55rem; }
+  .nivel h3 { font-size: 1.55rem; }
   .oferta-junior { padding: 22px 20px 18px; }
   /* Las ofertas se apilan como el mazo de promociones de adultos: la de atrás asoma y se pasa deslizando. */
   .ofertas-juniors {
@@ -1009,9 +1086,17 @@ li.mapa-chip.origen { cursor: default; background: rgba(212,17,31,.2); border-co
   .jd-estrella { top: 1.2%; right: 4%; width: 44px; height: 44px; }
   .jd-triangulo, .jd-b, .jd-a { display: none; }
   .hero-pie { flex-direction: column; align-items: flex-start; }
+  .barra { flex-wrap: wrap; }
+  .barra .ir-juniors { order: 5; flex-basis: 100%; margin: 14px 0 0; gap: 10px; padding-right: 16px; }
+  .ir-juniors-sello { width: 84px; }
+  .ir-juniors-sello img { width: 50px; }
+  .aviso-msj b { font-size: 1.15rem; }
+  .aviso-msj > span { font-size: .875rem; }
+  .cabecera-logo img { height: 48px; }
+  .cabecera-enlaces .btn { display: none; }
   .fija-juniors .fija-cuenta { font-size: .875rem; }
   .fija-juniors .fija-cuenta b { font-size: 1rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .nivel, .nivel-opcion, .ir-juniors, .btn-juniors, .oferta-hermanos, .oferta-junior { transition: none !important; }
+  .nivel, .nivel-opcion, .ir-juniors, .btn-juniors, .oferta-hermanos, .oferta-junior, .aviso-msj { transition: none !important; }
 }

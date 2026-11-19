@@ -1,9 +1,11 @@
 /* eslint-disable @next/next/no-img-element -- los logos y la mascota ya están optimizados; se usan <img> para que el HTML quede igual a la landing original. */
+import Link from 'next/link';
 import { Fragment } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { Cuenta, Icono, Medidor, Revelar, retraso } from './base';
 import {
-  CARPETA, CINTA, ESCENAS, FECHA_TRM, GARANTIA, HERMANOS, JUNIORS, MENSAJES, MISIONES, MODALIDADES, NIVELES, OBJETIVOS, OFERTAS_JUNIORS, PAISES, PASOS, PLANES, PREGUNTAS, PROMOS,
+  CARPETA, CINTA, ESCENAS, FECHA_TRM, GARANTIA, HERMANOS, JUNIORS, MENSAJES, MISIONES, MODALIDADES, NIVELES, OBJETIVOS, OFERTAS_JUNIORS, PAISES, PASOS, PLANES, PREGUNTAS,
+  PREGUNTAS_JUNIORS, PROMOS,
   RETO, TELEFONO, TELEFONO_VISIBLE, TRM, VERSUS, usd, wa,
 } from '@/lib/contenido';
 import type { IconoObjetivo } from '@/lib/contenido';
@@ -12,20 +14,25 @@ import { MAPA } from '@/lib/mapa';
 const externo = { target: '_blank', rel: 'noopener' } as const;
 
 /* ---------- barra fija de WhatsApp ----------
-   Tiene dos versiones: la de adultos (Black Friday) y la de English Time Juniors, que aparece
-   mientras se lee la sección de niños para que las dos ofertas no se crucen. */
-export function BarraFija() {
+   Dos versiones: la de adultos (Black Friday) en el inicio y la de English Time Juniors en su página. */
+export function BarraFija({ modo = 'adultos' }: { modo?: 'adultos' | 'juniors' }) {
+  if (modo === 'juniors') {
+    return (
+      <div className="fija modo-juniors" id="fija" aria-hidden="true" inert>
+        <div className="wrap fija-in fija-juniors">
+          <img src="/assets/juniors-logo-280.webp" alt="" width={280} height={192} loading="lazy" />
+          <p className="fija-cuenta"><span>Reto de 4 semanas</span><b>{OFERTAS_JUNIORS[0].precio}</b></p>
+          <a className="btn btn-juniors" href={wa(JUNIORS.barraFija)} {...externo}><Icono id="wa" /><span>Valoración gratis<span className="solo-escritorio"> de 15 minutos</span></span></a>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="fija" id="fija" aria-hidden="true" inert>
       <div className="wrap fija-in fija-adultos">
         <img src="/assets/logo-claro.webp" alt="" width={260} height={188} />
         <p className="fija-cuenta"><span className="pill">Black Friday</span><span><span className="solo-escritorio">Las promociones terminan en</span><span className="solo-movil">Promos de Black Friday</span></span><b data-cuenta-corta="">22 días</b></p>
         <a className="btn btn-rojo btn-brillo" href={wa(MENSAJES.barraFija)} {...externo}><Icono id="wa" /><span>Escribirle a Luis<span className="solo-escritorio"> por WhatsApp</span></span></a>
-      </div>
-      <div className="wrap fija-in fija-juniors">
-        <img src="/assets/juniors-logo-280.webp" alt="" width={280} height={192} loading="lazy" />
-        <p className="fija-cuenta"><span>Reto de 4 semanas</span><b>{OFERTAS_JUNIORS[0].precio}</b></p>
-        <a className="btn btn-juniors" href={wa(JUNIORS.barraFija)} {...externo}><Icono id="wa" /><span>Valoración gratis<span className="solo-escritorio"> de 15 minutos</span></span></a>
       </div>
     </div>
   );
@@ -96,6 +103,41 @@ function Saludo() {
   );
 }
 
+/* Aviso para papás (Luis: "que gire y diga English Time Juniors, que gire y diga Black Friday o ¿es para tu niño?").
+   El logo de Juniors va en un sello con un anillo de texto que gira, los mensajes cambian cada dos segundos
+   (los mueve el mismo código del sello de Black Friday), el aviso salta de vez en cuando y lleva a /juniors. */
+/** Colores del logo de Juniors, letra por letra (aviso del inicio y título del Club). */
+const COLORES_LETRAS = ['#FFC400', '#2DBE4E', '#F0242C', '#FFC400', '#19A7E0', '#2DBE4E', '#F0242C'];
+const MENSAJES_AVISO: { grande: string; chica: ReactNode }[] = [
+  {
+    grande: '¿Es para tu hijo?',
+    chica: <>Conoce English Time <span className="ir-juniors-nombre">{Array.from('Juniors').map((l, i) => (
+      <span style={{ '--i': i, '--c': COLORES_LETRAS[i % COLORES_LETRAS.length] } as CSSProperties} key={i}>{l}</span>
+    ))}</span></>,
+  },
+  { grande: 'Black Friday Kids', chica: '4 clases particulares por el precio de 3' },
+  { grande: 'Club de Adelantados', chica: 'Reto de 4 semanas en vacaciones' },
+];
+
+function AvisoJuniors() {
+  return (
+    <Link className="ir-juniors aparece" style={retraso('.5s')} href={JUNIORS.ruta} data-rota="">
+      <span className="ir-juniors-sello" aria-hidden="true">
+        <svg className="aviso-anillo" viewBox="0 0 100 100">
+          <defs><path id="aviso-anillo" d="M50 50m-41 0a41 41 0 1 1 82 0a41 41 0 1 1-82 0" /></defs>
+          <text><textPath href="#aviso-anillo" textLength="252">ENGLISH TIME JUNIORS ✦ BLACK FRIDAY ✦ </textPath></text>
+        </svg>
+        <img src="/assets/juniors-logo-280.webp" alt="" width={280} height={192} />
+      </span>
+      <span className="ir-juniors-mensajes">
+        {MENSAJES_AVISO.map((m, i) => (
+          <span className={i === 0 ? 'aviso-msj on' : 'aviso-msj'} key={m.grande}><b>{m.grande}</b><span>{m.chica}</span></span>
+        ))}
+      </span>
+    </Link>
+  );
+}
+
 export function Heroe() {
   return (
     <header className="hero">
@@ -103,6 +145,8 @@ export function Heroe() {
         <img className="logo-hero" src="/assets/logo-claro-hd.webp" srcSet="/assets/logo-claro.webp 260w, /assets/logo-claro-hd.webp 480w" sizes="(max-width: 700px) 106px, 160px"
           alt="English Time: easy, fast, fun!" width={480} height={346} fetchPriority="high" />
         <Sello lugar="barra" />
+        {/* El aviso de Juniors va arriba, en la primera pantalla: en escritorio junto al botón y en el celular debajo del logo. */}
+        <AvisoJuniors />
         <a className="btn btn-borde" href={wa(MENSAJES.general)} {...externo}>Escribir por WhatsApp</a>
       </div>
 
@@ -111,7 +155,7 @@ export function Heroe() {
           <Saludo />
           <Revelar as="h1" style={retraso('.25s')} tema="Clases de inglés en vivo por Zoom: particulares 1 a 1 y grupales">Imagina un día hablando inglés.</Revelar>
           <p className="lead aparece" style={retraso('.75s')}>Sin traductor, sin pena y sin quedarte callado. Baja y vívelo hora por hora: así cambia tu vida cuando por fin hablas inglés.</p>
-          <div className="acciones aparece" style={retraso('.95s')}>
+          <div className="acciones aparece" style={retraso('.95s')} data-fija-desde="">
             <a className="btn btn-rojo btn-brillo" href={wa(MENSAJES.general)} {...externo}><Icono id="wa" />Escribirle a Luis por WhatsApp</a>
             <Cuenta />
           </div>
@@ -126,11 +170,6 @@ export function Heroe() {
         <a className="bajar aparece" style={retraso('1.2s')} href="#dia">
           <svg viewBox="0 0 34 34" aria-hidden="true"><circle cx="17" cy="17" r="16" fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".5" /><path d="M11 14.5l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           Tu día empieza a las 7:00 a.m.
-        </a>
-        {/* Entrada directa para papás: salta a la sección de niños. */}
-        <a className="ir-juniors aparece" style={retraso('1.35s')} href="#juniors">
-          <img src="/assets/juniors-logo-280.webp" alt="" width={280} height={192} />
-          <span><b>¿Es para tu hijo?</b> Conoce English Time Juniors</span>
         </a>
       </div>
 
@@ -220,7 +259,7 @@ export function Clases() {
           <div className="versus-fila versus-cab" role="row"><span role="columnheader">Lo de siempre</span><span role="columnheader">En English Time</span></div>
           {VERSUS.map((v) => (
             <div className="versus-fila" role="row" key={v.antes}>
-              <p className="antes" role="cell"><Icono id="no" /><span>{v.antes}</span></p>
+              <p className="antes" role="cell"><Icono id="no" /><span><span className="tachon">{v.antes}</span></span></p>
               <p className="despues" role="cell"><Icono id="si" />{v.despues}</p>
             </div>
           ))}
@@ -455,7 +494,6 @@ export function Planes() {
 /* ---------- English Time Juniors: la sección de niños ----------
    Luis pidió que se reconozca sola al bajar: un ambiente propio (cuaderno cuadriculado, colores del logo
    de Juniors, figuras que flotan) y letras que dan vueltas. */
-const COLORES_LETRAS = ['#FFC400', '#2DBE4E', '#F0242C', '#FFC400', '#19A7E0', '#2DBE4E', '#F0242C'];
 
 /** Título hecho letra por letra: cada letra entra girando, da vueltas de vez en cuando y gira al tocarla. */
 function LetrasQueGiran({ texto }: { texto: string }) {
@@ -527,23 +565,28 @@ export function Juniors() {
           <div className="juniors-intro">
             <img className="juniors-logo" src="/assets/juniors-logo.webp" srcSet="/assets/juniors-logo-280.webp 280w, /assets/juniors-logo.webp 520w"
               sizes="(max-width: 700px) 190px, 250px" width={520} height={357} loading="lazy" alt="English Time Juniors" />
-            <h2 id="t-juniors" className="jt" aria-label={`English Time Juniors: ${JUNIORS.club}. ${JUNIORS.lema}`}>
+            <h1 id="t-juniors" className="jt" aria-label={`English Time Juniors: ${JUNIORS.club}. ${JUNIORS.lema}`}>
               <LetrasQueGiran texto={JUNIORS.club} />
-            </h2>
+            </h1>
             <p className="juniors-lema" aria-hidden="true">{JUNIORS.lema}</p>
             <p className="juniors-texto aparece">{JUNIORS.texto}</p>
-            <a className="btn btn-juniors aparece" style={retraso('.15s')} href={wa(JUNIORS.valoracion)} {...externo}><Icono id="wa" />Agendar la valoración gratis de 15 minutos</a>
+            <p className="juniors-atajos aparece" style={retraso('.1s')}>
+              {OFERTAS_JUNIORS.map((o) => (
+                <a href="#ofertas" key={o.id} className={`atajo-${o.id}`}>{o.id === 'reto' ? 'Reto de 4 semanas' : 'Kids VIP, 4 por 3'}: <b>{o.precio}</b></a>
+              ))}
+            </p>
+            <a className="btn btn-juniors aparece" style={retraso('.2s')} href={wa(JUNIORS.valoracion)} {...externo} data-fija-desde=""><Icono id="wa" />Agendar la valoración gratis de 15 minutos</a>
           </div>
 
           <div className="misiones-caja">
-            <h3 className="juniors-h3">Un mes, tres misiones</h3>
+            <h2 className="juniors-h3">Un mes, tres misiones</h2>
             <ul className="misiones">
               {MISIONES.map((m, i) => (
                 <li className={`mision mision-${m.id}`} style={retraso(`${i * 0.12}s`)} key={m.id}>
                   <span className="mision-icono" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{ICONOS_MISION[m.id]}</svg>
                   </span>
-                  <div><h4>{m.titulo}</h4><p>{m.texto}</p></div>
+                  <div><h3>{m.titulo}</h3><p>{m.texto}</p></div>
                 </li>
               ))}
             </ul>
@@ -551,40 +594,15 @@ export function Juniors() {
           </div>
         </div>
 
-        <div className="niveles" id="niveles">
-          <div className="niveles-pregunta">
-            <h3 className="juniors-h3">¿En qué grupo quedaría tu hijo?</h3>
-            <p>No los agrupamos por grado del colegio sino por lo que de verdad saben de inglés.</p>
-            <ReglaDeGrados />
-            <p className="niveles-q" id="niveles-q"><span className="oculto">Responde esta pregunta: </span>¿Tu hijo ya puede presentarse solo en inglés durante 30 segundos?</p>
-            <div className="niveles-opciones" role="group" aria-labelledby="niveles-q">
-              {NIVELES.map((n) => (
-                <button type="button" className={`nivel-opcion nivel-${n.id}`} data-nivel={n.id} aria-pressed="false" aria-controls={`nivel-${n.id}`} key={n.id}>{n.respuesta}</button>
-              ))}
-            </div>
-          </div>
-          <ul className="niveles-lista" aria-live="polite">
-            {NIVELES.map((n) => (
-              <li className={`nivel nivel-${n.id}`} id={`nivel-${n.id}`} key={n.id}>
-                <p className="nivel-numero">{n.numero}<span>{n.grados}</span></p>
-                <h4>{n.nombre}</h4>
-                <p>{n.perfil}</p>
-                <p className="nivel-temas"><b>Ve:</b> {n.temas}</p>
-                <a className="enlace-wa" href={wa(n.mensaje)} {...externo}><Icono id="wa" />Quiero un cupo en {n.nombre}</a>
-              </li>
-            ))}
-          </ul>
-          <p className="niveles-nota">Mismo tema, distinto reto: con <i lang="en">My Daily Routine</i>, el de 4.° escribe tres oraciones y el de 7.°, seis. Por eso hay solo {JUNIORS.cuposPorNivel} cupos por nivel.</p>
-        </div>
-
-        <div className="juniors-pie">
+        {/* Las ofertas van justo después de la presentación: Luis pidió que el papá encuentre rápido lo que se le ofrece. */}
+        <div className="juniors-pie" id="ofertas">
           <div className="carpeta">
             <svg className="carpeta-icono" viewBox="0 0 64 52" aria-hidden="true">
               <path d="M4 10a4 4 0 0 1 4-4h14l6 6h28a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" fill="#FFC400" stroke="currentColor" strokeWidth="2.5" strokeLinejoin="round" />
               <path d="M4 20h56" stroke="currentColor" strokeWidth="2.5" />
               <path className="carpeta-estrella" d="m32 25 2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z" fill="#F0242C" />
             </svg>
-            <h3 className="juniors-h3">La carpeta de logros</h3>
+            <h2 className="juniors-h3">La carpeta de logros</h2>
             <p>{RETO.entregaCarpeta}</p>
             <ul>{CARPETA.map((c) => <li key={c}>{c}</li>)}</ul>
             <p className="carpeta-nota">No pagas horas de clase: te llevas resultados que puedes ver.</p>
@@ -592,6 +610,7 @@ export function Juniors() {
 
           {/* En el celular las ofertas son un mazo de cartas apiladas (como las promociones de adultos): se deslizan, se tocan o se pasan con las flechas. */}
           <div className="ofertas-zona" id="mazo-juniors">
+            <h2 className="oculto">Ofertas de English Time Juniors</h2>
             <ul className="ofertas-juniors">
               {OFERTAS_JUNIORS.map((o, i) => {
                 const [numero, ...resto] = o.sello.split(' ');
@@ -630,6 +649,33 @@ export function Juniors() {
             </div>
           </div>
         </div>
+
+        <div className="niveles" id="niveles">
+          <div className="niveles-pregunta">
+            <h2 className="juniors-h3">¿En qué grupo quedaría tu hijo?</h2>
+            <p>No los agrupamos por grado del colegio sino por lo que de verdad saben de inglés.</p>
+            <ReglaDeGrados />
+            <p className="niveles-q" id="niveles-q"><span className="oculto">Responde esta pregunta: </span>¿Tu hijo ya puede presentarse solo en inglés durante 30 segundos?</p>
+            <div className="niveles-opciones" role="group" aria-labelledby="niveles-q">
+              {NIVELES.map((n) => (
+                <button type="button" className={`nivel-opcion nivel-${n.id}`} data-nivel={n.id} aria-pressed="false" aria-controls={`nivel-${n.id}`} key={n.id}>{n.respuesta}</button>
+              ))}
+            </div>
+          </div>
+          <ul className="niveles-lista" aria-live="polite">
+            {NIVELES.map((n) => (
+              <li className={`nivel nivel-${n.id}`} id={`nivel-${n.id}`} key={n.id}>
+                <p className="nivel-numero">{n.numero}<span>{n.grados}</span></p>
+                <h3>{n.nombre}</h3>
+                <p>{n.perfil}</p>
+                <p className="nivel-temas"><b>Ve:</b> {n.temas}</p>
+                <a className="enlace-wa" href={wa(n.mensaje)} {...externo}><Icono id="wa" />Quiero un cupo en {n.nombre}</a>
+              </li>
+            ))}
+          </ul>
+          <p className="niveles-nota">Mismo tema, distinto reto: con <i lang="en">My Daily Routine</i>, el de 4.° escribe tres oraciones y el de 7.°, seis. Por eso hay solo {JUNIORS.cuposPorNivel} cupos por nivel.</p>
+        </div>
+
       </div>
     </section>
   );
@@ -657,7 +703,7 @@ export function Preguntas() {
 /* ---------- cierre y pie ---------- */
 export function Cierre() {
   return (
-    <section className="seccion cierre" id="cierre" aria-labelledby="t-cierre">
+    <section className="seccion cierre" id="cierre" aria-labelledby="t-cierre" data-fija-hasta="">
       <Medidor decorativo />
       <div className="wrap">
         <Revelar id="t-cierre">Dentro de un año vas a desear haber empezado hoy.</Revelar>
@@ -670,13 +716,67 @@ export function Cierre() {
   );
 }
 
-export function PiePagina() {
+export function PiePagina({ juniors = false }: { juniors?: boolean }) {
   return (
     <footer>
       <div className="wrap">
         <img src="/assets/logo-blanco.webp" alt="English Time" width={200} height={144} loading="lazy" />
         <span>© 2026 English Time. Clases de inglés por Zoom, particulares 1 a 1 y grupales, desde cualquier país.</span>
+        {juniors
+          ? <Link className="pie-enlace" href="/">Clases de inglés para adultos</Link>
+          : <Link className="pie-enlace" href={JUNIORS.ruta}>English Time Juniors: inglés para niños</Link>}
       </div>
     </footer>
+  );
+}
+
+/* ---------- página de English Time Juniors ---------- */
+
+/** Cabecera de la página de niños: vuelve al inicio de English Time y abre WhatsApp. */
+export function CabeceraJuniors() {
+  return (
+    <header className="cabecera-juniors">
+      <div className="wrap">
+        <Link href="/" className="cabecera-logo" aria-label="English Time: clases de inglés para adultos">
+          <img src="/assets/logo-claro.webp" alt="English Time" width={260} height={188} />
+        </Link>
+        <nav className="cabecera-enlaces" aria-label="English Time">
+          <Link href="/">Clases para adultos</Link>
+          <a className="btn btn-borde" href={wa(JUNIORS.barraFija)} {...externo}><Icono id="wa" />Escribirle a Luis</a>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+export function PreguntasJuniors() {
+  return (
+    <section className="seccion juniors-preguntas" id="preguntas-juniors" aria-labelledby="t-preguntas-juniors">
+      <div className="wrap">
+        <h2 id="t-preguntas-juniors" className="juniors-h3">Lo que preguntan los papás</h2>
+        <div className="preguntas">
+          {PREGUNTAS_JUNIORS.map((q) => (
+            <details key={q.pregunta}>
+              <summary>{q.pregunta}</summary>
+              <p>{q.respuesta}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function CierreJuniors() {
+  return (
+    <section className="seccion cierre-juniors" id="cierre-juniors" aria-labelledby="t-cierre-juniors" data-fija-hasta="">
+      <div className="wrap">
+        <img className="juniors-logo visto" src="/assets/juniors-logo-280.webp" alt="" width={280} height={192} loading="lazy" />
+        <h2 id="t-cierre-juniors">Que vuelva al colegio adelantado.</h2>
+        <p>Agenda la valoración gratis de 15 minutos y te decimos en qué grupo queda tu hijo.</p>
+        <a className="btn btn-juniors" href={wa(JUNIORS.valoracion)} {...externo}><Icono id="wa" />Agendar la valoración gratis</a>
+        <p className="numero">O guarda el número: <a href={`tel:${TELEFONO}`}>{TELEFONO_VISIBLE}</a></p>
+      </div>
+    </section>
   );
 }

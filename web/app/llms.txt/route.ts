@@ -32,6 +32,7 @@ export function GET() {
     ...PROMOS.map((p) => `- ${p.titulo}: ${p.texto} ${p.precio} COP ${p.precioNota} (unos ${usd(p.precio)}).`),
     '',
     `## English Time Juniors: ${JUNIORS.club} (inglés para niños)`,
+    `Página: ${SITIO}${JUNIORS.ruta}`,
     `${JUNIORS.lema} ${JUNIORS.texto}`,
     ...MISIONES.map((m) => `- ${m.titulo}: ${m.texto}`),
     `- Grupos por nivel de inglés, no por grado del colegio; ${JUNIORS.cuposPorNivel} cupos por nivel. Para ubicar al niño: ¿ya puede presentarse solo en inglés durante 30 segundos?`,

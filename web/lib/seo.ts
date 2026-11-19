@@ -1,4 +1,4 @@
-import { FIN_PROMOS, GARANTIA, HERMANOS, JUNIORS, NEGOCIO, NIVELES, OFERTAS_JUNIORS, PLANES, PREGUNTAS, RETO, SITIO, TELEFONO, WHATSAPP } from './contenido';
+import { FIN_PROMOS, GARANTIA, HERMANOS, JUNIORS, NEGOCIO, NIVELES, OFERTAS_JUNIORS, PLANES, PREGUNTAS, PREGUNTAS_JUNIORS, RETO, SITIO, TELEFONO, WHATSAPP } from './contenido';
 
 /* Palabras clave principales: guían títulos, descripciones y datos estructurados. */
 export const SEO = {
@@ -10,7 +10,14 @@ export const SEO = {
     'preparación examen de ciudadanía americana', 'clases de inglés para la ciudadanía', 'preparación para exámenes de certificación de inglés',
     'inglés conversacional', 'inglés para viajar', 'inglés para el trabajo', 'inglés desde cero',
     'curso de inglés online', 'clases particulares de inglés',
-    'clases de inglés para niños', 'inglés para niños por Zoom', 'English Time Juniors', 'Club de Adelantados',
+  ],
+};
+
+/** Palabras clave de la página de niños (/juniors). */
+export const SEO_JUNIORS = {
+  palabrasClave: [
+    'clases de inglés para niños', 'inglés para niños por Zoom', 'clases de inglés online para niños', 'inglés para niños en vacaciones',
+    'clases particulares de inglés para niños', 'curso de inglés para niños', 'English Time Juniors', 'Club de Adelantados',
   ],
 };
 
@@ -168,22 +175,64 @@ export function datosEstructurados() {
     hasCourseInstance: { '@type': 'CourseInstance', courseMode: 'Online', location: { '@type': 'VirtualLocation', url: `${SITIO}/` } },
   };
 
-  // English Time Juniors: el Club de Adelantados para niños, en grupos por nivel de inglés, y el Kids VIP de clases particulares.
+  const preguntas = {
+    '@type': 'FAQPage',
+    '@id': id('preguntas'),
+    mainEntity: PREGUNTAS.map((q) => ({
+      '@type': 'Question',
+      name: q.pregunta,
+      acceptedAnswer: { '@type': 'Answer', text: q.respuesta },
+    })),
+  };
+
+  return { '@context': 'https://schema.org', '@graph': [organizacion, sitio, pagina, curso, grupo, ciudadania, certificacion, bootcamp, preguntas] };
+}
+
+/** Grafo JSON-LD de la página de English Time Juniors: la academia, la página con sus migas, el curso de niños y sus preguntas. */
+export function datosJuniors() {
+  const url = `${SITIO}${JUNIORS.ruta}`;
+  const organizacion = {
+    '@type': ['EducationalOrganization', 'OnlineBusiness'],
+    '@id': id('organizacion'),
+    name: NEGOCIO.nombre,
+    url: `${SITIO}/`,
+    logo: { '@type': 'ImageObject', url: `${SITIO}/assets/logo-oscuro.png`, width: 867, height: 624 },
+    telephone: TELEFONO,
+    areaServed: 'Worldwide',
+  };
+  const pagina = {
+    '@type': 'WebPage',
+    '@id': `${url}#pagina`,
+    url,
+    name: JUNIORS.tituloPagina,
+    description: JUNIORS.descripcionPagina,
+    inLanguage: 'es',
+    isPartOf: { '@id': id('sitio') },
+    about: { '@id': `${url}#curso` },
+    mainEntity: { '@id': `${url}#curso` },
+    breadcrumb: {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: NEGOCIO.nombre, item: `${SITIO}/` },
+        { '@type': 'ListItem', position: 2, name: 'English Time Juniors', item: url },
+      ],
+    },
+  };
   const [reto, vip] = OFERTAS_JUNIORS;
   const juniors = {
     '@type': 'Course',
-    '@id': id('juniors'),
+    '@id': `${SITIO}${JUNIORS.ruta}#curso`,
     name: `English Time Juniors: ${JUNIORS.club}`,
     description: `${JUNIORS.texto} Grupos por nivel de inglés: ${NIVELES.map((n) => n.nombre).join(', ')}.`,
-    provider: proveedor,
+    provider: { '@id': id('organizacion') },
     inLanguage: 'es',
     teaches: 'Inglés para niños',
     audience: { '@type': 'PeopleAudience', suggestedMinAge: 8, suggestedMaxAge: 15 },
-    url: `${SITIO}/#juniors`,
+    url: `${SITIO}${JUNIORS.ruta}`,
     offers: [
-      { '@type': 'Offer', category: 'Paid', name: reto.titulo, description: `${reto.incluye.join(' ')} ${reto.ahorro}`, price: precio(reto.precio), priceCurrency: 'COP', validThrough: FIN_PROMOS, url: `${SITIO}/#juniors` },
-      { '@type': 'Offer', category: 'Paid', name: `${reto.titulo}, tarifa de hermanos o amigos (2 niños)`, price: precio(HERMANOS.precio), priceCurrency: 'COP', validThrough: FIN_PROMOS, url: `${SITIO}/#juniors` },
-      { '@type': 'Offer', category: 'Paid', name: vip.titulo, description: `${vip.incluye.join(' ')} ${vip.ahorro}`, price: precio(vip.precio), priceCurrency: 'COP', validThrough: FIN_PROMOS, url: `${SITIO}/#juniors` },
+      { '@type': 'Offer', category: 'Paid', name: reto.titulo, description: `${reto.incluye.join(' ')} ${reto.ahorro}`, price: precio(reto.precio), priceCurrency: 'COP', validThrough: FIN_PROMOS, url: `${SITIO}${JUNIORS.ruta}` },
+      { '@type': 'Offer', category: 'Paid', name: `${reto.titulo}, tarifa de hermanos o amigos (2 niños)`, price: precio(HERMANOS.precio), priceCurrency: 'COP', validThrough: FIN_PROMOS, url: `${SITIO}${JUNIORS.ruta}` },
+      { '@type': 'Offer', category: 'Paid', name: vip.titulo, description: `${vip.incluye.join(' ')} ${vip.ahorro}`, price: precio(vip.precio), priceCurrency: 'COP', validThrough: FIN_PROMOS, url: `${SITIO}${JUNIORS.ruta}` },
     ],
     hasCourseInstance: {
       '@type': 'CourseInstance',
@@ -200,15 +249,10 @@ export function datosEstructurados() {
 
   const preguntas = {
     '@type': 'FAQPage',
-    '@id': id('preguntas'),
-    mainEntity: PREGUNTAS.map((q) => ({
-      '@type': 'Question',
-      name: q.pregunta,
-      acceptedAnswer: { '@type': 'Answer', text: q.respuesta },
-    })),
+    '@id': `${url}#preguntas`,
+    mainEntity: PREGUNTAS_JUNIORS.map((q) => ({ '@type': 'Question', name: q.pregunta, acceptedAnswer: { '@type': 'Answer', text: q.respuesta } })),
   };
-
-  return { '@context': 'https://schema.org', '@graph': [organizacion, sitio, pagina, curso, grupo, juniors, ciudadania, certificacion, bootcamp, preguntas] };
+  return { '@context': 'https://schema.org', '@graph': [organizacion, pagina, juniors, preguntas] };
 }
 
 /** JSON listo para <script type="application/ld+json">, sin "<" que pueda cerrar la etiqueta. */

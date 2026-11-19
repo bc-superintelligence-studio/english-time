@@ -21,14 +21,14 @@ export default function Interacciones() {
     const todos = <T extends Element = HTMLElement>(sel: string, raiz: ParentNode = document) => Array.from(raiz.querySelectorAll<T>(sel));
 
     /* 1. Entradas al hacer scroll: cada bloque se marca una sola vez cuando aparece. */
-    const deck = document.getElementById('deck') as HTMLElement;
+    const deck = document.getElementById('deck');
     const revelables = todos('.revelar, .aparece, .escena, .versus-fila, .pasos, .plan, .objetivo, .modalidad, .cierre, .deck, .juniors-logo, .jt, .mision, .nivel, .carpeta, .oferta-junior, .regla');
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((es) => {
         es.forEach((e) => {
           if (!e.isIntersecting) return;
           e.target.classList.add('visto');
-          if (e.target === deck) { deck.classList.add('repartir'); despues(() => deck.classList.remove('repartir'), 1300); }
+          if (deck && e.target === deck) { deck.classList.add('repartir'); despues(() => deck.classList.remove('repartir'), 1300); }
           io.unobserve(e.target);
         });
       }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
@@ -62,34 +62,56 @@ export default function Interacciones() {
     limpiar.push(() => window.clearInterval(intervalo));
 
     /* 3. Un día en inglés: cada escena cambia el color de la sección y mueve los relojes a su hora. */
-    const dia = document.getElementById('dia') as HTMLElement;
-    const escenas = todos('.escena', dia);
-    const ahora = escenas[escenas.length - 1];
-    const miniHora = dia.querySelector('.mini-hora') as HTMLElement;
-    const miniPasos = todos('.mini-pasos i', dia);
-    let activa: HTMLElement | null = null;
-    let minActual = 420, girado = 0;
-    const etiqueta = (min: number) => { const h = Math.floor(min / 60) % 24; return (h % 12 || 12) + ':' + dos(min % 60) + ' ' + (h < 12 ? 'a.m.' : 'p.m.'); };
-    // Las manecillas giran por el camino más corto (hasta 6 horas hacia adelante o hacia atrás).
-    const mover = (min: number) => {
-      let d = ((min - minActual) % 720 + 720) % 720;
-      if (d > 360) d -= 720;
-      girado += d; minActual = min;
-      todos<SVGElement>('.mano-h', dia).forEach((x) => { x.style.transform = 'rotate(' + (210 + girado * 0.5) + 'deg)'; });
-      todos<SVGElement>('.mano-m', dia).forEach((x) => { x.style.transform = 'rotate(' + (girado * 6) + 'deg)'; });
-    };
-    // La última escena es la hora real de quien visita: saludo y colores según el momento del día.
-    const momentoDe = (h: number) => (h < 5 || h >= 19 ? 'noche' : h < 10 ? 'manana' : h < 14 ? 'mediodia' : h < 17 ? 'tarde' : 'atardecer');
-    const saludoDe = (h: number) => (h >= 5 && h < 12 ? 'Buenos días' : h >= 12 && h < 19 ? 'Buenas tardes' : 'Buenas noches');
-    const pintarAhora = () => {
-      const d = new Date(), h = d.getHours(), m = d.getMinutes(), min = h * 60 + m;
-      (document.getElementById('previa-ahora') as HTMLElement).textContent = saludoDe(h) + '. ' + ((h % 12 || 12) === 1 ? 'Ahora mismo es la' : 'Ahora mismo son las');
-      (document.getElementById('hora-ahora') as HTMLElement).innerHTML = (h % 12 || 12) + ':' + dos(m) + '<small>' + (h < 12 ? 'a.m.' : 'p.m.') + '</small>';
-      ahora.dataset.min = String(min);
-      ahora.dataset.momento = momentoDe(h);
-      if (activa === ahora) { mover(min); miniHora.textContent = etiqueta(min); dia.dataset.momento = ahora.dataset.momento; }
-      pintarZonas();
-    };
+    const dia = document.getElementById('dia');
+    let revisarDia = () => {};
+    if (dia) {
+      const escenas = todos('.escena', dia);
+      const ahora = escenas[escenas.length - 1];
+      const miniHora = dia.querySelector('.mini-hora') as HTMLElement;
+      const miniPasos = todos('.mini-pasos i', dia);
+      let activa: HTMLElement | null = null;
+      let minActual = 420, girado = 0;
+      const etiqueta = (min: number) => { const h = Math.floor(min / 60) % 24; return (h % 12 || 12) + ':' + dos(min % 60) + ' ' + (h < 12 ? 'a.m.' : 'p.m.'); };
+      // Las manecillas giran por el camino más corto (hasta 6 horas hacia adelante o hacia atrás).
+      const mover = (min: number) => {
+        let d = ((min - minActual) % 720 + 720) % 720;
+        if (d > 360) d -= 720;
+        girado += d; minActual = min;
+        todos<SVGElement>('.mano-h', dia).forEach((x) => { x.style.transform = 'rotate(' + (210 + girado * 0.5) + 'deg)'; });
+        todos<SVGElement>('.mano-m', dia).forEach((x) => { x.style.transform = 'rotate(' + (girado * 6) + 'deg)'; });
+      };
+      // La última escena es la hora real de quien visita: saludo y colores según el momento del día.
+      const momentoDe = (h: number) => (h < 5 || h >= 19 ? 'noche' : h < 10 ? 'manana' : h < 14 ? 'mediodia' : h < 17 ? 'tarde' : 'atardecer');
+      const saludoDe = (h: number) => (h >= 5 && h < 12 ? 'Buenos días' : h >= 12 && h < 19 ? 'Buenas tardes' : 'Buenas noches');
+      const pintarAhora = () => {
+        const d = new Date(), h = d.getHours(), m = d.getMinutes(), min = h * 60 + m;
+        (document.getElementById('previa-ahora') as HTMLElement).textContent = saludoDe(h) + '. ' + ((h % 12 || 12) === 1 ? 'Ahora mismo es la' : 'Ahora mismo son las');
+        (document.getElementById('hora-ahora') as HTMLElement).innerHTML = (h % 12 || 12) + ':' + dos(m) + '<small>' + (h < 12 ? 'a.m.' : 'p.m.') + '</small>';
+        ahora.dataset.min = String(min);
+        ahora.dataset.momento = momentoDe(h);
+        if (activa === ahora) { mover(min); miniHora.textContent = etiqueta(min); dia.dataset.momento = ahora.dataset.momento; }
+      };
+      pintarAhora();
+      const relojAhora = window.setInterval(pintarAhora, 30000);
+      limpiar.push(() => window.clearInterval(relojAhora));
+      revisarDia = () => {
+        const mitad = innerHeight / 2;
+        let nueva: HTMLElement | null = null;
+        for (const e of escenas) {
+          const r = e.getBoundingClientRect();
+          if (r.top <= mitad && r.bottom > mitad) { nueva = e; break; }
+        }
+        if (!nueva) nueva = escenas[0].getBoundingClientRect().top > mitad ? escenas[0] : ahora;
+        if (nueva === activa) return;
+        activa = nueva;
+        const idx = escenas.indexOf(nueva);
+        dia.dataset.momento = nueva.dataset.momento;
+        mover(Number(nueva.dataset.min));
+        miniHora.textContent = etiqueta(Number(nueva.dataset.min));
+        miniPasos.forEach((p, i) => p.classList.toggle('on', i <= idx));
+      };
+    }
+
     /* Hora local de cada país del mapa. */
     const zonas = todos('[data-zona]');
     const pintarZonas = () => {
@@ -102,40 +124,21 @@ export default function Interacciones() {
         } catch { /* zona horaria no soportada: se queda sin hora */ }
       });
     };
-    pintarAhora();
-    const relojAhora = window.setInterval(pintarAhora, 30000);
-    limpiar.push(() => window.clearInterval(relojAhora));
-    const revisarDia = () => {
-      const mitad = innerHeight / 2;
-      let nueva: HTMLElement | null = null;
-      for (const e of escenas) {
-        const r = e.getBoundingClientRect();
-        if (r.top <= mitad && r.bottom > mitad) { nueva = e; break; }
-      }
-      if (!nueva) nueva = escenas[0].getBoundingClientRect().top > mitad ? escenas[0] : ahora;
-      if (nueva === activa) return;
-      activa = nueva;
-      const idx = escenas.indexOf(nueva);
-      dia.dataset.momento = nueva.dataset.momento;
-      mover(Number(nueva.dataset.min));
-      miniHora.textContent = etiqueta(Number(nueva.dataset.min));
-      miniPasos.forEach((p, i) => p.classList.toggle('on', i <= idx));
-    };
+    if (zonas.length) {
+      pintarZonas();
+      const relojZonas = window.setInterval(pintarZonas, 30000);
+      limpiar.push(() => window.clearInterval(relojZonas));
+    }
 
-    /* 4. Barra fija de WhatsApp: visible entre el botón del héroe y el cierre.
-       Mientras se lee la sección de niños, cambia a la versión de English Time Juniors. */
-    const fija = document.getElementById('fija') as HTMLElement;
-    const accionesHero = document.querySelector('.hero .acciones') as HTMLElement;
-    const cierre = document.getElementById('cierre') as HTMLElement;
-    const juniors = document.getElementById('juniors');
-    let fijaVisible = false, modoJuniors = false;
+    /* 4. Barra fija de WhatsApp: aparece cuando el primer botón de la página ([data-fija-desde]) sale de la pantalla
+       y se esconde al llegar al cierre ([data-fija-hasta]). En la página de Juniors es la versión de niños. */
+    const fija = document.getElementById('fija');
+    const desde = document.querySelector('[data-fija-desde]');
+    const hasta = document.querySelector('[data-fija-hasta]');
+    let fijaVisible = false;
     const revisarFija = () => {
-      if (juniors) {
-        const r = juniors.getBoundingClientRect();
-        const enJuniors = r.top < innerHeight * 0.5 && r.bottom > innerHeight * 0.5;
-        if (enJuniors !== modoJuniors) { modoJuniors = enJuniors; fija.classList.toggle('modo-juniors', enJuniors); }
-      }
-      const ver = accionesHero.getBoundingClientRect().bottom < 0 && cierre.getBoundingClientRect().top > innerHeight * 0.55;
+      if (!fija || !desde) return;
+      const ver = desde.getBoundingClientRect().bottom < 0 && (!hasta || hasta.getBoundingClientRect().top > innerHeight * 0.55);
       if (ver === fijaVisible) return;
       fijaVisible = ver;
       fija.classList.toggle('visible', ver);
@@ -152,30 +155,11 @@ export default function Interacciones() {
     limpiar.push(() => cancelAnimationFrame(cuadro));
     alScroll();
 
-    /* 5. Mazo de promociones: avanza solo como historias, se puede deslizar, tocar o usar con las flechas. */
+    /* Cartas de los mazos (promociones de adultos y ofertas de Juniors). */
     type Carta = HTMLElement & { _t?: number };
-    const cartas = todos<Carta>('.carta', deck);
-    const tabs = todos('.deck-tab', deck);
-    const paneles = todos('.deck-panel', deck);
-    const num = deck.querySelector('.deck-num') as HTMLElement;
-    const mesa = deck.querySelector('.deck-mesa') as HTMLElement;
-    const n = cartas.length;
-    let act = 0, auto = movimiento, enVista = false, encima = false;
-
-    const pintarDeck = () => {
-      cartas.forEach((c, i) => { c.dataset.o = String((i - act + n) % n); });
-      tabs.forEach((t, i) => { t.setAttribute('aria-selected', String(i === act)); t.tabIndex = i === act ? 0 : -1; });
-      paneles.forEach((p, i) => {
-        const on = i === act;
-        p.classList.toggle('activo', on);
-        p.setAttribute('aria-hidden', String(!on));
-        if (on) p.removeAttribute('inert'); else p.setAttribute('inert', '');
-      });
-      num.textContent = (act + 1) + ' / ' + n;
-    };
     const sinTransicion = (el: HTMLElement, fn: () => void) => { el.style.transition = 'none'; fn(); void el.offsetWidth; el.style.transition = ''; };
     /** Mueve un mazo: hacia adelante, la carta de adelante sale volando a la izquierda y vuelve al fondo;
-        hacia atrás, la carta anterior entra desde la izquierda. La sirven el mazo de adultos y el de Juniors. */
+        hacia atrás, la carta anterior entra desde la izquierda. */
     const volarCarta = (vieja: Carta, entra: Carta, dir: number) => {
       if (!movimiento) return;
       if (dir > 0) {
@@ -188,96 +172,119 @@ export default function Interacciones() {
         requestAnimationFrame(() => requestAnimationFrame(() => entra.classList.remove('sale')));
       }
     };
-    const ir = (destino: number, dir: number) => {
-      const nueva = (destino + n) % n;
-      if (nueva === act) return;
-      volarCarta(cartas[act], cartas[nueva], dir);
-      act = nueva;
-      pintarDeck();
-    };
-    limpiar.push(() => cartas.forEach((c) => window.clearTimeout(c._t)));
-    const estadoAuto = () => {
-      deck.classList.toggle('auto', auto);
-      deck.classList.toggle('pausa', !enVista || encima || document.hidden);
-    };
-    const parar = () => { if (auto) { auto = false; estadoAuto(); } };
 
-    escuchar(deck, 'animationend', ((e: AnimationEvent) => {
-      if (auto && e.animationName === 'llenar' && (e.target as Element).closest('.deck-tab') === tabs[act]) ir(act + 1, 1);
-    }) as EventListener);
-    escuchar(deck, 'mouseenter', () => { encima = true; estadoAuto(); });
-    escuchar(deck, 'mouseleave', () => { encima = false; estadoAuto(); });
-    escuchar(document, 'visibilitychange', estadoAuto);
-    if ('IntersectionObserver' in window) {
-      const vista = new IntersectionObserver((es) => { enVista = es[0].isIntersecting; estadoAuto(); }, { threshold: 0.35 });
-      vista.observe(deck);
-      limpiar.push(() => vista.disconnect());
+    /* 5. Mazo de promociones: avanza solo como historias, se puede deslizar, tocar o usar con las flechas. */
+    if (deck) {
+      const cartas = todos<Carta>('.carta', deck);
+      const tabs = todos('.deck-tab', deck);
+      const paneles = todos('.deck-panel', deck);
+      const num = deck.querySelector('.deck-num') as HTMLElement;
+      const mesa = deck.querySelector('.deck-mesa') as HTMLElement;
+      const n = cartas.length;
+      let act = 0, auto = movimiento, enVista = false, encima = false;
+
+      const pintarDeck = () => {
+        cartas.forEach((c, i) => { c.dataset.o = String((i - act + n) % n); });
+        tabs.forEach((t, i) => { t.setAttribute('aria-selected', String(i === act)); t.tabIndex = i === act ? 0 : -1; });
+        paneles.forEach((p, i) => {
+          const on = i === act;
+          p.classList.toggle('activo', on);
+          p.setAttribute('aria-hidden', String(!on));
+          if (on) p.removeAttribute('inert'); else p.setAttribute('inert', '');
+        });
+        num.textContent = (act + 1) + ' / ' + n;
+      };
+      const ir = (destino: number, dir: number) => {
+        const nueva = (destino + n) % n;
+        if (nueva === act) return;
+        volarCarta(cartas[act], cartas[nueva], dir);
+        act = nueva;
+        pintarDeck();
+      };
+      limpiar.push(() => cartas.forEach((c) => window.clearTimeout(c._t)));
+      const estadoAuto = () => {
+        deck.classList.toggle('auto', auto);
+        deck.classList.toggle('pausa', !enVista || encima || document.hidden);
+      };
+      const parar = () => { if (auto) { auto = false; estadoAuto(); } };
+
+      escuchar(deck, 'animationend', ((e: AnimationEvent) => {
+        if (auto && e.animationName === 'llenar' && (e.target as Element).closest('.deck-tab') === tabs[act]) ir(act + 1, 1);
+      }) as EventListener);
+      escuchar(deck, 'mouseenter', () => { encima = true; estadoAuto(); });
+      escuchar(deck, 'mouseleave', () => { encima = false; estadoAuto(); });
+      escuchar(document, 'visibilitychange', estadoAuto);
+      if ('IntersectionObserver' in window) {
+        const vista = new IntersectionObserver((es) => { enVista = es[0].isIntersecting; estadoAuto(); }, { threshold: 0.35 });
+        vista.observe(deck);
+        limpiar.push(() => vista.disconnect());
+      }
+
+      tabs.forEach((t, i) => {
+        escuchar(t, 'click', () => { parar(); ir(i, i > act ? 1 : -1); });
+        escuchar(t, 'keydown', ((e: KeyboardEvent) => {
+          const k = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+          if (!k) return;
+          e.preventDefault(); parar(); ir(act + k, k); tabs[act].focus();
+        }) as EventListener);
+      });
+      todos('.deck-flecha', deck).forEach((b) => {
+        escuchar(b, 'click', () => { parar(); const d = Number(b.dataset.dir); ir(act + d, d); });
+      });
+
+      // Arrastrar con el dedo o el mouse; un toque en la carta de adelante abre el WhatsApp de esa promo.
+      let x0: number | null = null, dx = 0, arrastra = false, puntero: number | null = null, objetivo: Carta | null = null;
+      escuchar(mesa, 'pointerdown', ((e: PointerEvent) => {
+        if (e.button) return;
+        x0 = e.clientX; dx = 0; arrastra = false; puntero = e.pointerId; objetivo = (e.target as Element).closest('.carta');
+      }) as EventListener);
+      escuchar(mesa, 'pointermove', ((e: PointerEvent) => {
+        if (x0 === null || e.pointerId !== puntero) return;
+        dx = e.clientX - x0;
+        if (!arrastra && Math.abs(dx) > 8) {
+          arrastra = true; parar();
+          try { mesa.setPointerCapture(puntero); } catch { /* el puntero ya se soltó */ }
+          cartas[act].style.transition = 'none';
+        }
+        if (arrastra) cartas[act].style.transform = 'translateX(' + dx + 'px) rotate(' + (dx / 18) + 'deg)';
+      }) as EventListener);
+      const soltar = ((e: PointerEvent) => {
+        if (x0 === null) return;
+        x0 = null;
+        const frente = cartas[act];
+        if (!arrastra) {
+          if (e.type !== 'pointerup' || !objetivo) return;
+          const i = cartas.indexOf(objetivo);
+          if (i === act) (paneles[act].querySelector('a.btn') as HTMLAnchorElement).click();
+          else { parar(); ir(i, 1); }
+          return;
+        }
+        frente.style.transition = ''; frente.style.transform = '';
+        if (dx < -60) ir(act + 1, 1);
+        else if (dx > 60) ir(act - 1, -1);
+      }) as EventListener;
+      escuchar(mesa, 'pointerup', soltar);
+      escuchar(mesa, 'pointercancel', soltar);
+
+      pintarDeck();
+      estadoAuto();
     }
 
-    tabs.forEach((t, i) => {
-      escuchar(t, 'click', () => { parar(); ir(i, i > act ? 1 : -1); });
-      escuchar(t, 'keydown', ((e: KeyboardEvent) => {
-        const k = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-        if (!k) return;
-        e.preventDefault(); parar(); ir(act + k, k); tabs[act].focus();
-      }) as EventListener);
-    });
-    todos('.deck-flecha', deck).forEach((b) => {
-      escuchar(b, 'click', () => { parar(); const d = Number(b.dataset.dir); ir(act + d, d); });
-    });
-
-    // Arrastrar con el dedo o el mouse; un toque en la carta de adelante abre el WhatsApp de esa promo.
-    let x0: number | null = null, dx = 0, arrastra = false, puntero: number | null = null, objetivo: Carta | null = null;
-    escuchar(mesa, 'pointerdown', ((e: PointerEvent) => {
-      if (e.button) return;
-      x0 = e.clientX; dx = 0; arrastra = false; puntero = e.pointerId; objetivo = (e.target as Element).closest('.carta');
-    }) as EventListener);
-    escuchar(mesa, 'pointermove', ((e: PointerEvent) => {
-      if (x0 === null || e.pointerId !== puntero) return;
-      dx = e.clientX - x0;
-      if (!arrastra && Math.abs(dx) > 8) {
-        arrastra = true; parar();
-        try { mesa.setPointerCapture(puntero); } catch { /* el puntero ya se soltó */ }
-        cartas[act].style.transition = 'none';
-      }
-      if (arrastra) cartas[act].style.transform = 'translateX(' + dx + 'px) rotate(' + (dx / 18) + 'deg)';
-    }) as EventListener);
-    const soltar = ((e: PointerEvent) => {
-      if (x0 === null) return;
-      x0 = null;
-      const frente = cartas[act];
-      if (!arrastra) {
-        if (e.type !== 'pointerup' || !objetivo) return;
-        const i = cartas.indexOf(objetivo);
-        if (i === act) (paneles[act].querySelector('a.btn') as HTMLAnchorElement).click();
-        else { parar(); ir(i, 1); }
-        return;
-      }
-      frente.style.transition = ''; frente.style.transform = '';
-      if (dx < -60) ir(act + 1, 1);
-      else if (dx > 60) ir(act - 1, -1);
-    }) as EventListener;
-    escuchar(mesa, 'pointerup', soltar);
-    escuchar(mesa, 'pointercancel', soltar);
-
-    pintarDeck();
-    estadoAuto();
-
-    /* 6. Sello de Black Friday: cambia de promoción, gira más rápido al pasar el mouse y se inclina hacia el puntero. */
-    const sellos = todos('.sello');
+    /* 6. Sello de Black Friday (y aviso de Juniors): cambia de mensaje, gira más rápido al pasar el mouse y se inclina hacia el puntero. */
+    const sellos = todos('.sello, [data-rota]');
     if (movimiento) {
       let k = 0;
       const cambiarOferta = window.setInterval(() => {
         if (document.hidden) return;
         k++;
         sellos.forEach((s) => {
-          const ofertas = todos('.sello-oferta', s), n = ofertas.length;
+          const ofertas = todos('.sello-oferta, .aviso-msj', s), n = ofertas.length;
           ofertas.forEach((o, i) => { o.classList.toggle('on', i === k % n); o.classList.toggle('sale', i === (k - 1) % n); });
         });
       }, 2000);
       limpiar.push(() => window.clearInterval(cambiarOferta));
       sellos.forEach((s) => {
-        const giro = s.querySelector('.sello-giro');
+        const giro = s.querySelector('.sello-giro, .aviso-anillo');
         const velocidad = (v: number) => giro?.getAnimations().forEach((a) => a.updatePlaybackRate(v));
         escuchar(s, 'pointerenter', () => velocidad(5));
         escuchar(s, 'pointerleave', () => velocidad(1));
@@ -387,6 +394,7 @@ export default function Interacciones() {
 
     /* 8. English Time Juniors: las letras del título giran al tocarlas, las figuras flotan solo
        mientras la sección se ve, y la pregunta de "30 segundos en inglés" señala el grupo del niño. */
+    const juniors = document.getElementById('juniors');
     if (juniors) {
       if ('IntersectionObserver' in window) {
         const vistaJuniors = new IntersectionObserver((es) => { juniors.classList.toggle('en-vista', es[0].isIntersecting); }, { threshold: 0.05 });
