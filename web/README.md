@@ -8,7 +8,7 @@ Es la misma landing de `../landing/index.html` pasada a Next.js 16. El diseño, 
 npm run dev      # desarrollo en http://localhost:3000
 npm run build    # compilación de producción (la página sale estática)
 npm start        # sirve la compilación
-npm run piezas   # regenera las publicidades: 5 de adultos y 4 de Juniors (PNG en ../publicidades) y la imagen para compartir /juniors
+npm run piezas   # regenera las publicidades: 5 de adultos y 10 de Juniors (5 con precios y 5 de marca) (PNG en ../publicidades) y la imagen para compartir /juniors
 ```
 
 ## Dónde se edita cada cosa
@@ -22,7 +22,7 @@ npm run piezas   # regenera las publicidades: 5 de adultos y 4 de Juniors (PNG e
 | Países del mapa (lista de texto) | `PAISES` en `lib/contenido.tsx` |
 | Rutas y puntos del mapa | `lib/mapa.ts`, `public/assets/mapa-*.svg` (se regeneran con `scripts/generar-mapa.mjs`) |
 | Diseño de las 5 publicidades (también son las tarjetas del carrusel) | `public/piezas/piezas.html` |
-| Diseño de las 4 publicidades de Juniors y de la imagen al compartir `/juniors` | `public/piezas/juniors.html` |
+| Diseño de las publicidades de Juniors (5 de Black Friday y 5 de marca, sin precios) y de la imagen al compartir `/juniors` | `public/piezas/juniors.html` |
 | Secciones de la página | `components/secciones.tsx` |
 | Animaciones, cuenta regresiva, carrusel, barra fija (con su versión Juniors), sello de Black Friday, puntos del mapa, letras que giran, pregunta de niveles y mazo de ofertas de Juniors en el celular | `components/Interacciones.tsx` |
 | Estilos | `app/globals.css` |
